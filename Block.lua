@@ -14,14 +14,15 @@ setmetatable(Block, {
 })
 
 function Block:init()
-	assert(self.data)
-	assert(self.key)
+	assert(self.data, "Block must have data")
+	assert(self.key, "Block must have a key to sign or verify with")
 
 	if self.hash then
-		assert(self.hash == hash(self:_hashables()))
-		assert(self.key:verify(self.signature, self:_hashables()))
+		assert(self.timestamp, "Block is missing a timestamp")
+		assert(self.hash == hash(self:_hashables()), "Block initialized hash does not match computed hash")
+		assert(self.key:verify(self.signature, self:_hashables()), "Block signature is invalid")
 	else
-		assert(not self.signature)
+		assert(not self.signature, "Block signature should not be present if hash is missing")
 
 		if not self.timestamp then
 			-- UTC time
@@ -32,9 +33,8 @@ function Block:init()
 		self.signature = self.key:sign(self:_hashables())
 	end
 
-	assert(self.timestamp)
-	assert(self.hash)
-	assert(self.signature)
+	assert(self.hash, "Block is missing a hash")
+	assert(self.signature, "Block is missing a signature")
 end
 
 function Block:_hashables()

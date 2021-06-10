@@ -6,15 +6,15 @@ tohex = require("tohex")
 
 print("hash", tohex(hash("foobar")))
 
-local key = PrivateKey()
-local signature = key:sign("foobar")
+key = PrivateKey()
+signature = key:sign("foobar")
 print("key", key)
 print("signature", tohex(signature))
 print("verifies?", key:verify(signature, "foobar"))
 
-local pubkey = key:public_key()
+pubkey = key:public_key()
 print("pubkey", pubkey)
 print("pubkey verifies?", pubkey:verify(signature, "foobar"))
 
-local block = Block { data = "foobar", key = key }
+block = Block { data = "foobar", key = key }
 print(block)
