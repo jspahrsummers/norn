@@ -1,11 +1,8 @@
+Block = require("Block")
 hash = require("hash")
 PrivateKey = require("PrivateKey")
 PublicKey = require("PublicKey")
-
-function tohex(b)
-	local s = string.gsub(b, "(.)", function (x) return string.format("%.1x", string.byte(x)) end)
-	return s
-end
+tohex = require("tohex")
 
 print("hash", tohex(hash("foobar")))
 
@@ -18,3 +15,6 @@ print("verifies?", key:verify(signature, "foobar"))
 local pubkey = key:public_key()
 print("pubkey", pubkey)
 print("pubkey verifies?", pubkey:verify(signature, "foobar"))
+
+local block = Block { data = "foobar", key = key }
+print(block)

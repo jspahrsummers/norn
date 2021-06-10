@@ -22,9 +22,9 @@ function PrivateKey:init(str)
 	end
 end
 
-function PrivateKey:sign(data)
+function PrivateKey:sign(...)
 	local d = digest.new(self.digest_type)
-	d:update(data)
+	d:update(...)
 
 	local sig = self.pkey:sign(d)
 	return sig

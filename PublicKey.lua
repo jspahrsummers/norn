@@ -21,9 +21,9 @@ function PublicKey:init(str, privkey)
 	end
 end
 
-function PublicKey:verify(signature, data)
+function PublicKey:verify(signature, ...)
 	local d = digest.new(self.digest_type)
-	d:update(data)
+	d:update(...)
 
 	return self.pkey:verify(signature, d)
 end
