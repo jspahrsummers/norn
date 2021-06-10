@@ -1,18 +1,20 @@
-secure_hash = require("secure_hash")
-signing = require("signing")
+hash = require("hash")
+PrivateKey = require("PrivateKey")
+PublicKey = require("PublicKey")
 
 function tohex(b)
 	local s = string.gsub(b, "(.)", function (x) return string.format("%.1x", string.byte(x)) end)
 	return s
 end
 
-print("hash", tohex(secure_hash.hash("foobar")))
+print("hash", tohex(hash("foobar")))
 
-local key = signing.new_key()
-local signature = signing.sign("foobar", key)
+local key = PrivateKey()
+local signature = key:sign("foobar")
+print("key", key)
 print("signature", tohex(signature))
-print("verifies?", signing.verify(signature, "foobar", key))
+print("verifies?", key:verify(signature, "foobar"))
 
-local pubkey = signing.serialize_public_key(key)
+local pubkey = key:public_key()
 print("pubkey", pubkey)
-print("pubkey verifies?", signing.verify(signature, "foobar", signing.deserialize_public_key(pubkey)))
+print("pubkey verifies?", pubkey:verify(signature, "foobar"))
