@@ -1,9 +1,9 @@
 local M = {}
 local digest = require("openssl.digest")
 
-function M.hash(s)
-	d = digest.new("sha256")
-	return d:final(s)
+function M.hash(data)
+	local d = digest.new("sha256")
+	return d:final(data)
 end
 
 return M
