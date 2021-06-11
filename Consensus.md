@@ -6,8 +6,9 @@
 * _p<sub>0</sub>, ..., p<sub>N</sub>_ are the **online** producers, ordered from greatest stake (_0_) to smallest stake (_N_)
 * _t_ is the liveness interval
 * _B_ is the rate limit on becoming a producer
+* _m_ is the minimum in-game currency required to stake
 * _z_ is the penalty (denominated in in-game currency) applied to any producer which is caught cheating
-	* _z_ could be defined as the amount of in-game currency held by the richest producer, plus some constant amount to still discourage cheating when the game is in its infancy
+	* _z_ could be defined as the amount of in-game currency held by the richest producer, plus _m_, so staking is no longer possible for the cheater
 	* Negative balances are permitted!
 
 ## Election
@@ -15,7 +16,7 @@
 Any time there are _zero_ producers, any node can elect itself a producer without approval.
 
 Otherwise, these are the steps for any node that wishes to be elected as a producer:
-1. Submit a staking request, along with proof of ownership of a wallet containing the stake. The candidate must have a greater stake than at least one of the current producers (or, if the list is incomplete, any stake greater than zero).
+1. Submit a staking request, along with proof of ownership of a wallet containing the stake. The candidate must have a greater stake than at least one of the current producers (or, if the list is incomplete, any stake greater than zero), and greater than constant value _m_ as well.
 1. The other producers vote in the election. As soon as at least 2/3 of the existing producers approve the candidate, the candidate is added to the producer list.
 1. The new producer list is broadcast to the whole network via a new block on the chain.
 
@@ -34,6 +35,10 @@ Any node that was a producer within the last interval _B_ is ineligible to be el
 
 * Evidence of any producer _p<sub>i</sub>_ approving two mutually exclusive transactions can be submitted to the chain by anyone (but most likely another producer), which will deduct _z_ from _p<sub>i</sub>_'s balance.
 	* Penalties can still be applied this way even if _p<sub>i</sub>_ is no longer actively producing.
+
+## Wallet creation
+
+Any node can create a new wallet by submitting a transaction to do so. The wallet will be created with some balance less than _m_, so that the node is not immediately eligible for staking.
 
 ## References
 
