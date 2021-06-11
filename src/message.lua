@@ -1,5 +1,6 @@
---- This module contains messages that are sent between nodes but _not_ encoded as-is into the blockchain.
+local cjson = require("cjson.safe")
 
+--- This module contains messages that are sent between nodes but _not_ encoded as-is into the blockchain.
 local M = {}
 
 M.USER_DEFINED = "user-defined"
@@ -56,5 +57,8 @@ M.APPROVE_EVICTION = "approve-eviction"
 function M.approve_eviction()
 	-- TODO
 end
+
+M.encode = cjson.encode
+M.decode = cjson.decode
 
 return M

@@ -1,5 +1,6 @@
---- This module contains opcodes that are encoded in blocks on the blockchain.
+local cjson = require("cjson.safe")
 
+--- This module contains opcodes that are encoded in blocks on the blockchain.
 local M = {}
 
 M.USER_DEFINED = "user-defined"
@@ -16,5 +17,8 @@ M.PENALTY = "penalty"
 function M.penalty(...)
 	-- TODO
 end
+
+M.encode = cjson.encode
+M.decode = cjson.decode
 
 return M
