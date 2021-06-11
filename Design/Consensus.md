@@ -16,7 +16,7 @@
 Any time there are _zero_ producers, any node can elect itself a producer without approval.
 
 Otherwise, these are the steps for any node that wishes to be elected as a producer:
-1. Submit a staking request, along with proof of ownership of a wallet containing the stake. The candidate must have a greater stake than at least one of the current producers (or, if the list is incomplete, any stake greater than zero), and greater than constant value _m_ as well.
+1. Submit a staking request, along with proof of ownership of a wallet containing the stake. The candidate must have a greater stake than at least one of the current producers (unless the list is incomplete), and greater than constant value _m_ as well.
 1. The other producers vote in the election. As soon as at least 2/3 of the existing producers approve the candidate, the candidate is added to the producer list.
 1. The new producer list is broadcast to the whole network via a new block on the chain.
 
