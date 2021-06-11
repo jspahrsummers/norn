@@ -4,9 +4,9 @@ local cjson = require("cjson.safe")
 local M = {}
 
 --- Any message whose handling is defined in the embedding application.
-M.USER_DEFINED = "user-defined"
-function M.user_defined(...)
-	return { M.USER_DEFINED, ... }
+M.APP_DEFINED = "app-defined"
+function M.app_defined(...)
+	return { M.APP_DEFINED, ... }
 end
 
 --- Ping one or more nodes to see if they're online, and how great the latency is.

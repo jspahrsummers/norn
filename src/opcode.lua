@@ -4,9 +4,9 @@ local cjson = require("cjson.safe")
 local M = {}
 
 --- Any block whose handling is defined in the embedding application.
-M.USER_DEFINED = "user-defined"
-function M.user_defined(...)
-	return { M.USER_DEFINED, ... }
+M.APP_DEFINED = "app-defined"
+function M.app_defined(...)
+	return { M.APP_DEFINED, ... }
 end
 
 --- Contains the new list of producers that all nodes should now follow, along with their wallets (so any node can attempt to stake if it has more).
