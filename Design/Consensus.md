@@ -29,12 +29,13 @@ Any node that was a producer within the last interval _B_ is ineligible to be el
 1. Participants multicast their proposed transactions to all _p_.
 1. Each _p<sub>i</sub>_ which approves the transaction broadcasts its approval to all the other producers _p_.
 1. As soon as at least 2/3 of producers _p_ approve the transaction, it is finalized and committed ("forged"), and broadcast through the whole network.
-	1. If any producer _p<sub>i</sub>_ fails to respond within interval _t_, the other producers can forge a block to remove _p<sub>i</sub>_ from the producer list; afterward, a new producer is elected (see above).
+	1. If any producer _p<sub>i</sub>_ fails to respond within interval _t_, the other producers can evict _p<sub>i</sub>_ from the producer list.
 
 ## Penalties
 
 * Evidence of any producer _p<sub>i</sub>_ approving two mutually exclusive transactions can be submitted to the chain by anyone (but most likely another producer), which will deduct _z_ from _p<sub>i</sub>_'s balance.
 	* Penalties can still be applied this way even if _p<sub>i</sub>_ is no longer actively producing.
+* If, at any point, _p<sub>i</sub>_ falls below the minimum staking requirement _m_, the other producers can evict _p<sub>i</sub>_ from the producer list.
 
 ## Wallet creation
 
