@@ -1,4 +1,5 @@
 Block = require("Block")
+Blockchain = require("Blockchain")
 hash = require("hash")
 PrivateKey = require("PrivateKey")
 PublicKey = require("PublicKey")
@@ -17,4 +18,7 @@ print("pubkey", pubkey)
 print("pubkey verifies?", pubkey:verify(signature, "foobar"))
 
 block = Block { data = "foobar", key = key }
-print(block)
+block2 = Block { data = "fuzzbuzz", key = key, previous_hash = block.hash }
+
+blockchain = Blockchain { block, block2 }
+print(blockchain)
