@@ -42,6 +42,8 @@ Any node that was a producer within the last interval _B_ is ineligible to be el
 
 Any node can create a new wallet by submitting a transaction to do so. The wallet will be created with some balance less than _m_, so that the node is not immediately eligible for staking.
 
+**TODO:** This wallet should also have restrictions on transferring out its initial balance, or some other mechanism to prevent immediately pooling N new wallets to obtain a stake (or even just to quickly generate lots of in-game currency).
+
 ## References
 
 * https://academy.binance.com/en/articles/byzantine-fault-tolerance-explained
