@@ -5,7 +5,7 @@
 * _N_ is the number of producers (fixed constant)
 * _p<sub>0</sub>, ..., p<sub>N</sub>_ are the **online** producers, ordered from greatest stake (_0_) to smallest stake (_N_)
 * _t_ is the liveness interval
-* _B_ is the rate limit on becoming a producer
+* _B_ is the rate limit on becoming a producer after eviction
 * _m_ is the minimum in-game currency required to stake
 * _z_ is the penalty (denominated in in-game currency) applied to any producer which is caught cheating
 	* _z_ could be defined as the amount of in-game currency held by the richest producer, plus _m_, so staking is no longer possible for the cheater
@@ -20,14 +20,14 @@ Otherwise, these are the steps for any node that wishes to be elected as a produ
 1. The other producers vote in the election. As soon as at least 2/3 of the existing producers approve the candidate, the candidate is added to the producer list.
 1. The new producer list is broadcast to the whole network via a new block on the chain.
 
-Any node that was a producer within the last interval _B_ is ineligible to be elected as a producer until that time has past.
+Any node that was evicted as a producer within the last interval _B_ is ineligible to be elected as a producer until that time has passed.
 
 ![](election.svg)
 
 ## Forging
 
 1. Participants multicast their proposed transactions to all _p_.
-1. Each _p<sub>i</sub>_ which approves the transaction broadcasts its approval to all the other producers _p_.
+1. Each _p<sub>i</sub>_ which approves the transaction multicasts its approval to all the other producers _p_.
 1. As soon as at least 2/3 of producers _p_ approve the transaction, it is finalized and committed ("forged"), and broadcast through the whole network.
 	1. If any producer _p<sub>i</sub>_ fails to respond within interval _t_, the other producers can evict _p<sub>i</sub>_ from the producer list.
 1. Pending transactions expire after interval _t_ if not approved.
@@ -40,9 +40,7 @@ Any node that was a producer within the last interval _B_ is ineligible to be el
 
 ## Wallet creation
 
-Any node can create a new wallet by submitting a transaction to do so. The wallet will be created with some balance less than _m_, so that the node is not immediately eligible for staking.
-
-**TODO:** This wallet should also have restrictions on transferring out its initial balance, or some other mechanism to prevent immediately pooling N new wallets to obtain a stake (or even just to quickly generate lots of in-game currency).
+Any node can create a new wallet by submitting a transaction to do so. The wallet will be created with a zero balance, so that the node is not immediately eligible for staking.
 
 ## References
 
