@@ -2,8 +2,8 @@ local Block = {}
 Block.__index = Block
 
 local date = require("date")
-local hash = require("hash")
-local tohex = require("tohex")
+local hash = require("gamechain.hash")
+local tohex = require("gamechain.tohex")
 
 setmetatable(Block, {
 	__call = function (cls, obj, ...)

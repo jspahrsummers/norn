@@ -1,4 +1,4 @@
-local message = require("message")
+local message = require("gamechain.message")
 
 local Node = {}
 Node.__index = Node

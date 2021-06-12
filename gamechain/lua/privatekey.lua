@@ -1,6 +1,6 @@
 local digest = require("openssl.digest")
 local pkey = require("openssl.pkey")
-local PublicKey = require("PublicKey")
+local PublicKey = require("gamechain.publickey")
 
 local PrivateKey = {}
 PrivateKey.__index = PrivateKey

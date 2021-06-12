@@ -1,9 +1,9 @@
-Block = require("Block")
-Blockchain = require("Blockchain")
-hash = require("hash")
-PrivateKey = require("PrivateKey")
-PublicKey = require("PublicKey")
-tohex = require("tohex")
+Block = require("gamechain.block")
+Blockchain = require("gamechain.blockchain")
+hash = require("gamechain.hash")
+PrivateKey = require("gamechain.privatekey")
+PublicKey = require("gamechain.publickey")
+tohex = require("gamechain.tohex")
 
 print("hash", tohex(hash("foobar")))
 

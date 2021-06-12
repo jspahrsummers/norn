@@ -1,4 +1,4 @@
-local Block = require("Block")
+local Block = require("gamechain.block")
 
 local Blockchain = {}
 Blockchain.__index = Blockchain
