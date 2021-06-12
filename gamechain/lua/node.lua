@@ -4,19 +4,16 @@ local Node = {}
 Node.__index = Node
 
 setmetatable(Node, {
-	__call = function (cls, ...)
-		local self = setmetatable({}, cls)
+	__call = function (cls, obj, ...)
+		local self = setmetatable(obj or {}, cls)
 		self:init(...)
 		return self
 	end,
 })
 
-function Node:init(networker, peer_list, wallet_privkey)
-	assert(networker, "Node must be created with a networker to use")
-
-	self.networker = networker
+function Node:init(peer_list)
+	assert(self.networker, "Node must be created with a networker to use")
 	self.peer_set = peer_list_to_set(peer_list or {})
-	self.wallet_privkey = wallet_privkey
 end
 
 --- Runs the node logic forever, or until an error is raised.
@@ -33,10 +30,11 @@ end
 
 function Node:create_wallet()
 	if self.wallet_privkey then
-		io.stderr:write(str.format("Warning: creating new wallet for node to replace wallet %s", self.wallet_privkey:public_key()))
+		io.stderr:write(string.format("Warning: creating new wallet for node to replace wallet %s", self.wallet_privkey:public_key()))
 	end
 
 	-- TODO
+	assert(false)
 end
 
 function Node:handle_message(sender, msg)
@@ -46,6 +44,9 @@ function Node:handle_message(sender, msg)
 		[M.PONG] = self.handle_pong,
 		[M.REQUEST_PEER_LIST] = self.handle_request_peer_list,
 		[M.PEER_LIST] = self.handle_peer_list,
+		[M.REQUEST_BLOCKCHAIN] = self.handle_request_blockchain,
+		[M.BLOCKCHAIN] = self.handle_blockchain,
+		[M.BLOCK_FORGED] = self.handle_block_forged,
 	}
 
 	local name = msg[1]
@@ -58,7 +59,8 @@ function Node:handle_message(sender, msg)
 end
 
 function Node:handle_app_defined(sender, ...)
-	-- TODO
+	-- Does nothing by default. A custom handler can be provided at init time.
+	io.stderr:write("Node received app-defined message it doesn't know how to handle")
 end
 
 function Node:handle_ping(sender, token)
@@ -68,6 +70,7 @@ end
 
 function Node:handle_pong(sender, token)
 	-- TODO
+	assert(false)
 end
 
 function Node:handle_request_peer_list(sender, token)
@@ -79,6 +82,30 @@ function Node:handle_peer_list(sender, peers, maybe_token)
 	for _, peer in ipairs(peers) do
 		self.peer_set[peer] = true
 	end
+end
+
+function Node:handle_request_blockchain(sender, token)
+	if not self.chain then
+		return
+	end
+
+	local msg = message.blockchain(token, self.chain)
+	self.networker:send(sender, message.encode(msg))
+end
+
+function Node:handle_blockchain(sender, token, chain)
+	-- TODO: This should reconcile the multiple blockchains somehow (e.g., longest chain rule, or build consensus using N different chains). For now, we just trust the first one we receive.
+	if self.chain then
+		io.stderr:write("Another node tried to replace our blockchain with:\n", chain)
+		return
+	end
+
+	self.chain = chain
+end
+
+function Node:block_forged(sender, block)
+	-- TODO
+	assert(false)
 end
 
 local function peer_list_to_set(peer_list)
