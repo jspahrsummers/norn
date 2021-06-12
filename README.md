@@ -25,6 +25,15 @@ luarocks make --local gamechain-demo-*
 lua -l gamechain.demo
 ```
 
+### Running tests
+
+Tests are written using [Busted](http://olivinelabs.com/busted/), which is not installed via the project rockspecs:
+
+```sh
+luarocks install --local busted
+busted
+```
+
 ## Lua version
 
 Targeting [Lua 5.2](http://www.lua.org/manual/5.2/), for compatibility with [MoonSharp](https://www.moonsharp.org/).
