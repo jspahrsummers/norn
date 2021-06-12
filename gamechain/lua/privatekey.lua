@@ -34,6 +34,10 @@ function PrivateKey:public_key()
 	return PublicKey(nil, self.pkey)
 end
 
+function PrivateKey:__eq(other)
+	return tostring(self) == tostring(other)
+end
+
 function PrivateKey:__tostring()
 	return self.pkey:toPEM("private")
 end
