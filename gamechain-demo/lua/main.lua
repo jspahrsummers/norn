@@ -17,8 +17,8 @@ pubkey = key:public_key()
 print("pubkey", pubkey)
 print("pubkey verifies?", pubkey:verify(signature, "foobar"))
 
-block = Block { data = "foobar", key = key }
-block2 = Block { data = "fuzzbuzz", key = key, previous_hash = block.hash }
-
-blockchain = Blockchain { block, block2 }
-print(blockchain)
+-- block = Block { data = "foobar", key = key }
+-- block2 = Block { data = "fuzzbuzz", key = key, previous_hash = block.hash }
+-- 
+-- blockchain = Blockchain { block, block2 }
+-- print(blockchain)

@@ -119,7 +119,7 @@ function Node:handle_block_forged(sender, block)
 end
 
 local function peer_list_to_set(peer_list)
-	local set = []
+	local set = {}
 	for _, peer in pairs(peer_list) do
 		set[peer] = true
 	end
@@ -128,18 +128,18 @@ local function peer_list_to_set(peer_list)
 end
 
 local function peer_set_to_list(peer_set)
-	local list = []
+	local list = {}
 	for peer, _ in pairs(peer_set) do
-		list[] = peer
+		list[#list + 1] = peer
 	end
 
 	return list
 end
 
 local function producer_keys(producers)
-	local keys = []
+	local keys = {}
 	for _, producer in pairs(producers) do
-		keys[] = producer.wallet_pubkey
+		keys[#keys + 1] = producer.wallet_pubkey
 	end
 
 	return keys

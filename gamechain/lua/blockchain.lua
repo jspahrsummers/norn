@@ -34,7 +34,7 @@ function Blockchain:add_block(block)
 	end
 
 	assert(block.timestamp and block.hash and #block.signatures > 0, "Invalid block added to blockchain")
-	self.blocks[] = block
+	self.blocks[#self.blocks + 1] = block
 	return true
 end
 
