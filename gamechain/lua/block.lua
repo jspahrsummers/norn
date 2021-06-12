@@ -1,6 +1,7 @@
 local Block = {}
 Block.__index = Block
 
+local consensus = require("gamechain.consensus")
 local date = require("date")
 local hash = require("gamechain.hash")
 local tohex = require("gamechain.tohex")
@@ -14,27 +15,32 @@ setmetatable(Block, {
 })
 
 function Block:init()
+	assert(self.timestamp, "Block is missing a timestamp")
 	assert(self.data, "Block must have data")
-	assert(self.key, "Block must have a key to sign or verify with")
+	assert(self.hash == hash(self:_hashables()), "Block initialized hash does not match computed hash")
+	assert(#self.signatures > 0, "Block must have signatures from forging producers")
+end
 
-	if self.hash then
-		assert(self.timestamp, "Block is missing a timestamp")
-		assert(self.hash == hash(self:_hashables()), "Block initialized hash does not match computed hash")
-		assert(self.key:verify(self.signature, self:_hashables()), "Block signature is invalid")
-	else
-		assert(not self.signature, "Block signature should not be present if hash is missing")
-
-		if not self.timestamp then
-			-- UTC time
-			self.timestamp = date(true)
+function Block:verify_signers(keys_orig)
+	local keys_copy = { table.unpack(keys_orig) }
+	local found = 0
+	for _, signature in self.signatures do
+		local matching_idx = nil
+		for i, key in keys_copy do
+			if key:verify(signature) then
+				found = found + 1
+				break
+			end
 		end
 
-		self.hash = hash(self:_hashables())
-		self.signature = self.key:sign(self:_hashables())
+		if matching_idx then
+			found = found + 1
+			table.remove(keys_copy, matching_idx)
+		end
 	end
 
-	assert(self.hash, "Block is missing a hash")
-	assert(self.signature, "Block is missing a signature")
+	local missing = #keys_copy
+	return consensus.approved { agreed = found, disagreed = missing }
 end
 
 function Block:_hashables()

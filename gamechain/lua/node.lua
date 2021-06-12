@@ -81,7 +81,7 @@ function Node:handle_request_peer_list(sender, token)
 end
 
 function Node:handle_peer_list(sender, peers, maybe_token)
-	for _, peer in ipairs(peers) do
+	for _, peer in pairs(peers) do
 		self.peer_set[peer] = true
 	end
 end
@@ -106,18 +106,21 @@ function Node:handle_blockchain(sender, token, chain)
 	self.chain = chain
 end
 
-function Node:block_forged(sender, block)
-	-- TODO: Verify that known producers signed the block
+function Node:handle_block_forged(sender, block)
+	if not block:verify_signers(producer_keys(self.known_producers)) then
+		io.stderr.write(string.format("Missing consensus for block sent by peer node %s:\n%s", sender, block))
+		return
+	end
 
 	if not self.chain:add_block(block) then
-		io.stderr.write(string.format("Peer node %s tried to add an incompatible block %s to our chain", sender, block.hash))
+		io.stderr.write(string.format("Peer node %s tried to add an incompatible block to our chain:\n%s", sender, block))
 		return
 	end
 end
 
 local function peer_list_to_set(peer_list)
 	local set = []
-	for _, peer in ipairs(peer_list) do
+	for _, peer in pairs(peer_list) do
 		set[peer] = true
 	end
 
@@ -131,6 +134,15 @@ local function peer_set_to_list(peer_set)
 	end
 
 	return list
+end
+
+local function producer_keys(producers)
+	local keys = []
+	for _, producer in pairs(producers) do
+		keys[] = producer.wallet_pubkey
+	end
+
+	return keys
 end
 
 return Node
