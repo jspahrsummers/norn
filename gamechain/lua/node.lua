@@ -41,11 +41,11 @@ end
 
 function Node:handle_message(sender, msg)
 	local handlers = {
-		[M.APP_DEFINED] = self.app_defined,
-		[M.PING] = self.ping,
-		[M.PONG] = self.pong,
-		[M.REQUEST_PEER_LIST] = self.request_peer_list,
-		[M.PEER_LIST] = self.peer_list,
+		[M.APP_DEFINED] = self.handle_app_defined,
+		[M.PING] = self.handle_ping,
+		[M.PONG] = self.handle_pong,
+		[M.REQUEST_PEER_LIST] = self.handle_request_peer_list,
+		[M.PEER_LIST] = self.handle_peer_list,
 	}
 
 	local name = msg[1]
@@ -57,25 +57,25 @@ function Node:handle_message(sender, msg)
 	end
 end
 
-function Node:app_defined(sender, ...)
+function Node:handle_app_defined(sender, ...)
 	-- TODO
 end
 
-function Node:ping(sender, token)
+function Node:handle_ping(sender, token)
 	local msg = message.pong(token)
 	self.networker:send(sender, message.encode(msg))
 end
 
-function Node:pong(sender, token)
+function Node:handle_pong(sender, token)
 	-- TODO
 end
 
-function Node:request_peer_list(sender, token)
+function Node:handle_request_peer_list(sender, token)
 	local msg = message.peer_list(peer_set_to_list(self.peer_set), token)
 	self.networker:send(sender, message.encode(msg))
 end
 
-function Node:peer_list(sender, peers, maybe_token)
+function Node:handle_peer_list(sender, peers, maybe_token)
 	for _, peer in ipairs(peers) do
 		self.peer_set[peer] = true
 	end
