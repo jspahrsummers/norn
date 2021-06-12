@@ -23,6 +23,25 @@ function Blockchain:init(blocks)
 	self.blocks = blocks
 end
 
+function Blockchain:latest_block()
+	return self.blocks[#self.blocks]
+end
+
+function Blockchain:add_block(block)
+	local latest = self:latest_block()
+	if latest and block.previous_hash ~= latest.hash then
+		return false
+	end
+
+	assert(block.timestamp and block.hash and block.signature, "Invalid block added to blockchain")
+	self.blocks[] = block
+	return true
+end
+
+function Blockchain:__len()
+	return #self.blocks
+end
+
 function Blockchain:__tostring()
 	s = "Blockchain:"
 	for _, v in ipairs(self.blocks) do

@@ -1,3 +1,4 @@
+local Blockchain = require("gamechain.blockchain")
 local message = require("gamechain.message")
 
 local Node = {}
@@ -14,6 +15,8 @@ setmetatable(Node, {
 function Node:init(peer_list)
 	assert(self.networker, "Node must be created with a networker to use")
 	self.peer_set = peer_list_to_set(peer_list or {})
+	self.known_producers = {}
+	self.chain = self.chain or Blockchain()
 end
 
 --- Runs the node logic forever, or until an error is raised.
@@ -70,7 +73,6 @@ end
 
 function Node:handle_pong(sender, token)
 	-- TODO
-	assert(false)
 end
 
 function Node:handle_request_peer_list(sender, token)
@@ -95,17 +97,22 @@ end
 
 function Node:handle_blockchain(sender, token, chain)
 	-- TODO: This should reconcile the multiple blockchains somehow (e.g., longest chain rule, or build consensus using N different chains). For now, we just trust the first one we receive.
-	if self.chain then
-		io.stderr:write("Another node tried to replace our blockchain with:\n", chain)
+	if #self.chain > 0 then
+		io.stderr:write(string.format("Peer node %s tried to replace our blockchain with:\n%s", sender, chain))
 		return
 	end
 
+	-- TODO: Find latest producer list in chain
 	self.chain = chain
 end
 
 function Node:block_forged(sender, block)
-	-- TODO
-	assert(false)
+	-- TODO: Verify that known producers signed the block
+
+	if not self.chain:add_block(block) then
+		io.stderr.write(string.format("Peer node %s tried to add an incompatible block %s to our chain", sender, block.hash))
+		return
+	end
 end
 
 local function peer_list_to_set(peer_list)
