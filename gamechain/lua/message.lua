@@ -86,6 +86,25 @@ function M.spend(wallet_pubkey, spender_signature, amount, ...)
 	-- TODO
 end
 
+--- Sent when a node wants to request a copy of the blockchain.
+-- Currently fetches all history. It may be possible to limit the fetch in the future.
+M.REQUEST_BLOCKCHAIN = "request-blockchain"
+function M.request_blockchain(token)
+	-- TODO
+end
+
+--- Response to a blockchain request.
+M.BLOCKCHAIN = "blockchain"
+function M.blockchain(token, chain)
+	-- TODO
+end
+
+--- Sent to all nodes when producers have forged a new block for the chain.
+M.BLOCK_FORGED = "block-forged"
+function M.block_forged(block)
+	-- TODO
+end
+
 M.encode = cjson.encode
 M.decode = cjson.decode
 
