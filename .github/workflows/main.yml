@@ -20,10 +20,11 @@ jobs:
       - name: Make gamechain-demo
         run: luarocks make --local gamechain-demo-*.rockspec
       
+      - name: Install test runner
+        run: luarocks install busted
+      
       - name: Run tests
-        run: |
-          luarocks install busted
-          busted
+        run: busted -o utfTerminal
       
       - name: Run demo
         run: lua -l gamechain.demo -e ''
