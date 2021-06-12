@@ -1,5 +1,5 @@
-# mmo-blockchain
- Embeddable blockchain library for massively multiplayer games
+# gamechain
+Embeddable blockchain library for low-latency P2P multiplayer games
 
 ## Getting started
 
