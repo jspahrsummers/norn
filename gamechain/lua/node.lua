@@ -12,11 +12,18 @@ setmetatable(Node, {
 	end,
 })
 
-function Node:init(peer_list)
+function Node:init()
 	assert(self.networker, "Node must be created with a networker to use")
-	self.peer_set = peer_list_to_set(peer_list or {})
+
+	if self.peer_list then
+		self.peer_set = peer_list_to_set(self.peer_list)
+		self.peer_list = nil
+	else
+		self.peer_set = {}
+	end
+
 	self.known_producers = {}
-	self.chain = self.chain or Blockchain()
+	self.chain = self.chain or Blockchain {}
 end
 
 --- Runs the node logic forever, or until an error is raised.
@@ -42,14 +49,14 @@ end
 
 function Node:handle_message(sender, msg)
 	local handlers = {
-		[M.APP_DEFINED] = self.handle_app_defined,
-		[M.PING] = self.handle_ping,
-		[M.PONG] = self.handle_pong,
-		[M.REQUEST_PEER_LIST] = self.handle_request_peer_list,
-		[M.PEER_LIST] = self.handle_peer_list,
-		[M.REQUEST_BLOCKCHAIN] = self.handle_request_blockchain,
-		[M.BLOCKCHAIN] = self.handle_blockchain,
-		[M.BLOCK_FORGED] = self.handle_block_forged,
+		[message.APP_DEFINED] = self.handle_app_defined,
+		[message.PING] = self.handle_ping,
+		[message.PONG] = self.handle_pong,
+		[message.REQUEST_PEER_LIST] = self.handle_request_peer_list,
+		[message.PEER_LIST] = self.handle_peer_list,
+		[message.REQUEST_BLOCKCHAIN] = self.handle_request_blockchain,
+		[message.BLOCKCHAIN] = self.handle_blockchain,
+		[message.BLOCK_FORGED] = self.handle_block_forged,
 	}
 
 	local name = msg[1]
