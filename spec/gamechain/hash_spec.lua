@@ -8,7 +8,7 @@ describe("hash", function ()
 		assert.are.equal(#h, 32)
 	end)
 
-	it("consistently hashes the equal value", function ()
+	it("should be idempotent", function ()
 		assert.are.equal(hash("foobar"), hash("foobar"))
 	end)
 

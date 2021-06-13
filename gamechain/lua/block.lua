@@ -17,18 +17,19 @@ setmetatable(Block, {
 function Block:init()
 	assert(self.timestamp, "Block is missing a timestamp")
 	assert(self.data, "Block must have data")
-	assert(self.hash == hash(self:_hashables()), "Block initialized hash does not match computed hash")
+	assert(self.hash == Block.compute_hash(self), "Block initialized hash does not match computed hash")
+	assert(self.signatures, "Block must have signatures from forging producers")
 	assert(#self.signatures > 0, "Block must have signatures from forging producers")
 end
 
 function Block:verify_signers(keys_orig)
 	local keys_copy = { table.unpack(keys_orig) }
 	local found = 0
-	for _, signature in self.signatures do
+	for _, signature in pairs(self.signatures) do
 		local matching_idx = nil
-		for i, key in keys_copy do
-			if key:verify(signature) then
-				found = found + 1
+		for i, key in ipairs(keys_copy) do
+			if key:verify(signature, self.hash) then
+				matching_idx = i
 				break
 			end
 		end
@@ -43,8 +44,10 @@ function Block:verify_signers(keys_orig)
 	return consensus.approved { agreed = found, disagreed = missing }
 end
 
-function Block:_hashables()
-	return self.timestamp:fmt("${iso}"), self.previous_hash or "", self.data
+function Block.compute_hash(obj)
+	assert(obj.timestamp, "Block is missing a timestamp")
+	assert(obj.data, "Block must have data")
+	return hash(obj.timestamp:fmt("${iso}"), obj.previous_hash or "", obj.data)
 end
 
 function Block:__tostring()
