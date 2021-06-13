@@ -32,7 +32,7 @@ end
 M.PEER_LIST = "peer-list"
 function M.peer_list(peers, maybe_token)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- A staking request from a node that would like to become a producer.
@@ -40,28 +40,28 @@ end
 M.STAKE = "stake"
 function M.stake(token, wallet_pubkey, signed_message)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- One producer's vote to approve a staking request.
 M.STAKE_VOTE_APPROVAL = "stake-vote-approval"
 function M.stake_vote_approval(token)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- One producer's vote to evict another producer, either for inactivity or because their stake fell below the minimum requirement.
 M.EVICTION_VOTE = "eviction-vote"
 function M.eviction_vote(token, wallet_pubkey)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- A request to create a new wallet. Nothing happens if the wallet already exists.
 M.CREATE_WALLET = "create-wallet"
 function M.create_wallet(wallet_pubkey, signed_message)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Sent when a node discovers evidence that one or more producers signed two mutually exclusive blocks before either had expired.
@@ -69,7 +69,7 @@ end
 M.CAUGHT_CHEATING = "caught-cheating"
 function M.caught_cheating(evidence_block_a, evidence_block_b)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Requests the latest balance for the named wallet.
@@ -77,14 +77,14 @@ end
 M.REQUEST_WALLET_BALANCE = "request-wallet-balance"
 function M.request_wallet_balance(token, wallet_pubkey)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Response to a wallet balance request.
 M.WALLET_BALANCE = "wallet-balance"
 function M.wallet_balance(token, wallet_pubkey, balance)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Sent from the owner of a wallet when they wish to spend some of their currency.
@@ -92,7 +92,7 @@ end
 M.SPEND = "spend"
 function M.spend(wallet_pubkey, spender_signature, amount, ...)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Sent when a node wants to request a copy of the blockchain.
@@ -100,21 +100,21 @@ end
 M.REQUEST_BLOCKCHAIN = "request-blockchain"
 function M.request_blockchain(token)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Response to a blockchain request.
 M.BLOCKCHAIN = "blockchain"
 function M.blockchain(token, chain)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Sent to all nodes when producers have forged a new block for the chain.
 M.BLOCK_FORGED = "block-forged"
 function M.block_forged(block)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 M.encode = cjson.encode

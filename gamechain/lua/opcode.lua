@@ -14,14 +14,14 @@ end
 M.PRODUCERS_CHANGED = "producers-changed"
 function M.producers_changed(new_producers_and_wallets)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Written when a new wallet is created.
 M.WALLET_CREATED = "wallet-created"
 function M.wallet_created(wallet_pubkey)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Written when a wallet has been caught cheating, and a penalty has been applied by the producer quorum.
@@ -29,7 +29,7 @@ end
 M.WALLET_PENALTY = "wallet-penalty"
 function M.wallet_penalty(wallet_pubkey, new_balance, evidence_block_a, evidence_block_b)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Written when the owner of a wallet has spent some of their currency.
@@ -37,7 +37,7 @@ end
 M.SPENT = "spent"
 function M.spent(wallet_pubkey, new_balance, spender_signature, amount, ...)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 --- Written when the network producers have minted new currency and deposited into the specified wallet.
@@ -45,7 +45,7 @@ end
 M.MINTED = "minted"
 function M.minted(wallet_pubkey, new_balance, ...)
 	-- TODO
-	assert(false)
+	return {}
 end
 
 M.encode = cjson.encode
