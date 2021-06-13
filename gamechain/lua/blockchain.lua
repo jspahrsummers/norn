@@ -1,7 +1,14 @@
 local Block = require("gamechain.block")
 
 local Blockchain = {}
-Blockchain.__index = Blockchain
+Blockchain.__index = function (self, key)
+	local idx = tonumber(key)
+	if idx then
+		return self.blocks[idx]
+	else
+		return Blockchain[key]
+	end
+end
 
 setmetatable(Blockchain, {
 	__call = function (cls, ...)
@@ -15,7 +22,10 @@ function Blockchain:init(blocks)
 	assert(blocks, "Blockchain must be initialized with a list of blocks")
 
 	for i, v in ipairs(blocks) do
-		if i > 1 then
+		if i == 1 then
+			-- TODO: Lift this restriction in future
+			assert(not v.previous_hash, "Missing blockchain history")
+		else
 			assert(v.previous_hash == blocks[i - 1].hash, "Blockchain is invalid")
 		end
 	end
