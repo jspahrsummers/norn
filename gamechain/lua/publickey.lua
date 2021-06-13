@@ -28,6 +28,10 @@ function PublicKey:verify(signature, ...)
 	return self.pkey:verify(signature, d)
 end
 
+function PublicKey:public_key()
+	return self
+end
+
 function PublicKey:__tostring()
 	return self.pkey:toPEM("public")
 end
