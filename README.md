@@ -12,7 +12,7 @@ This library implements _only the infrastructure_ and is designed to be embedded
 
 Some aspects of the blockchain implementation will seem related to cryptocurrency, like the reference to "wallets," "balances," and "spending," but _this refers to in-game currency only_, with no real-world monetary value.
 
-The library's [design philosophy](#why-a-new-blockchain) emphasizes gaming capabilities over true security. Funds may be lost or altered at any time, network forks may be trivially possible, etc. Do not transact real money using this library!
+The library's [design philosophy](#why-a-new-blockchain-implementation) emphasizes gaming capabilities over true security. Funds may be lost or altered at any time, network forks may be trivially possible, etc. Do not transact real money using this library!
 
 ## Why Lua?
 
