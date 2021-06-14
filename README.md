@@ -1,4 +1,4 @@
-# gamechain ![Lua 5.2.4](https://img.shields.io/badge/lua-5.2.4-blue)
+# gamechain [![Lua 5.2.4](https://img.shields.io/badge/lua-5.2.4-blue)](http://www.lua.org/manual/5.2/)
 
 _gamechain_ provides [blockchain](https://en.wikipedia.org/wiki/Blockchain) infrastructure for peer-to-peer multiplayer games, allowing players to coordinate game state without any central authority.
 
