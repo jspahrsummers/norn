@@ -2,7 +2,7 @@
 
 _gamechain_ provides [blockchain](https://en.wikipedia.org/wiki/Blockchain) infrastructure for peer-to-peer multiplayer games, allowing players to coordinate game state without any central authority.
 
-This library implements _only the infrastructure_ and is designed to be embedded into a game—it is neither a client or server for an existing blockchain network! Customized, game-specific logic is meant to be added on top, making it actually come alive.
+This library implements _only the infrastructure_ and is designed to be embedded into a game—it is neither a client nor a server for an existing blockchain network! Customized, game-specific logic is meant to be added on top, making it actually come alive.
 
 > **NOTE:** This library is just a proof of concept right now, and is not ready to be used in production games.
 
@@ -26,10 +26,10 @@ _gamechain_ targets [Lua 5.2](http://www.lua.org/manual/5.2/), for compatibility
 
 Most existing blockchains are built to transact cryptocurrencies (i.e., money), and their designs work toward this goal by prioritizing security, consistency, and correctness over everything else. In many implementations, block confirmations (when something is confirmed by the blockchain to have actually happened) can take minutes, or even hours.
 
-These features are important for games too, but real-time gaming requires _low latency_ above all else. Most multiplayer games are, by nature, slightly unpredictable (e.g., due to player ping differences) and have some incidence of cheating. Although neither effect is desirable, players will tolerate these consequences if it means that actions are mostly "instant."
+These features are important for games too, but real-time gaming requires _low latency_ above all else. Most multiplayer games are, by nature, slightly unpredictable (e.g., due to player ping differences) and have _some_ incidence of cheating. Although neither effect is desirable, players will tolerate these consequences if it means that actions are mostly "instant."
 
 Security- and cryptocurrency-focused blockchains _have_ been occasionally combined with gaming, but these applications generally look like one of the following:
-* _Paying to run the game itself_ using a distributed virtual machine (like Ethereum)
+* _Paying to run the game itself_ using a distributed virtual machine (like [Ethereum](https://ethereum.org/))
 * Games that use cryptocurrency for microtransactions
 * Turn-based games that aren't latency-sensitive
 
