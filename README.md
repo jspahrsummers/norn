@@ -4,7 +4,7 @@ _gamechain_ provides [blockchain](https://en.wikipedia.org/wiki/Blockchain) infr
 
 This library implements _only the infrastructure_ and is designed to be embedded into a game—it is neither a client nor a server for an existing blockchain network! Customized, game-specific logic is meant to be added on top, making it actually come alive.
 
-> **NOTE:** This library is just a proof of concept right now, and is not ready to be used in production games.
+> :warning: This library is (not even) a proof of concept right now, and is not ready to be used in production games. :warning:
 
 ## Is this a cryptocurrency?
 
