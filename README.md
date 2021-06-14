@@ -24,9 +24,9 @@ _gamechain_ targets [Lua 5.2](http://www.lua.org/manual/5.2/), for compatibility
 
 ## Why a new blockchain implementation?
 
-Most existing blockchains are built to transact cryptocurrencies (i.e., _money_), and their designs work toward this goal by prioritizing security, consistency, and correctness over everything else. In many implementations, block confirmations (when something is confirmed by the blockchain to have actually happened) can take minutes, or even hours.
+Most existing blockchains are built to transact cryptocurrencies (i.e., money), and their designs work toward this goal by prioritizing security, consistency, and correctness over everything else. In many implementations, block confirmations (when something is confirmed by the blockchain to have actually happened) can take minutes, or even hours.
 
-These concerns are all important for games too, but real-time gaming requires _low latency_ above all else. Most multiplayer games are slightly unpredictable (e.g., due to player ping differences) and have some incidence of cheating. Although neither effect is desirable, players will tolerate these consequences if it means that actions are mostly "instant."
+These features are important for games too, but real-time gaming requires _low latency_ above all else. Most multiplayer games are, by nature, slightly unpredictable (e.g., due to player ping differences) and have some incidence of cheating. Although neither effect is desirable, players will tolerate these consequences if it means that actions are mostly "instant."
 
 Security- and cryptocurrency-focused blockchains _have_ been occasionally combined with gaming, but these applications generally look like one of the following:
 * _Paying to run the game itself_ using a distributed virtual machine (like Ethereum)
