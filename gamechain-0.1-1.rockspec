@@ -1,11 +1,11 @@
 package = "gamechain"
 version = "0.1-1"
 source = {
-   url = "git+https://github.com/jspahrsummers/mmo-blockchain.git"
+   url = "git+https://github.com/jspahrsummers/gamechain.git"
 }
 description = {
-   summary = "Embeddable blockchain library for massively multiplayer games",
-   homepage = "https://github.com/jspahrsummers/mmo-blockchain",
+   summary = "Embeddable blockchain library for low-latency P2P multiplayer games",
+   homepage = "https://github.com/jspahrsummers/gamechain",
    license = "MIT",
    maintainer = "Justin Spahr-Summers <justin@jspahrsummers.com>"
 }
