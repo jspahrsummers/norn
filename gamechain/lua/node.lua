@@ -3,6 +3,7 @@ local message = require("gamechain.message")
 local opcode = require("gamechain.opcode")
 local Producer = require("gamechain.producer")
 local PublicKey = require("gamechain.publickey")
+local tohex = require("gamechain.tohex")
 
 local Node = {}
 Node.__index = Node
@@ -154,7 +155,9 @@ function Node:_set_blockchain(chain)
 
 	for block in self.chain:traverse_latest() do
 		local op = opcode.decode(block.data)
-		if op[1] == opcode.PRODUCERS_CHANGED then
+		if not op then
+			io.stderr:write(string.format("Unable to parse block %s", tohex(block.hash)))
+		elseif op[1] == opcode.PRODUCERS_CHANGED then
 			for row in op[2] do
 				local address, wallet_pubkey, wallet_balance = table.unpack(row)
 				self.known_producers[#self.known_producers + 1] = Producer {
