@@ -83,4 +83,19 @@ describe("blockchain", function ()
 		local b = Blockchain { first, create_block("fuzzbuzz", first.hash) }
 		assert.are_not.equal(a, b)
 	end)
+
+	it("should traverse latest to oldest", function ()
+		local first = create_block("foobar")
+		local second = create_block("fuzzbuzz", first.hash)
+		local third = create_block("blahblah", second.hash)
+
+		local chain = Blockchain { first, second, third }
+		local traversed = {}
+		for block in chain:traverse_latest() do
+			traversed[#traversed + 1] = block
+		end
+
+		assert.not_nil(chain)
+		assert.are.same(traversed, { third, second, first })
+	end)
 end)

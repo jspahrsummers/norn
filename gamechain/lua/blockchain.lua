@@ -48,6 +48,16 @@ function Blockchain:add_block(block)
 	return true
 end
 
+--- Iterates over the blockchain, starting with the latest block first.
+function Blockchain:traverse_latest()
+	local idx = #self.blocks
+	return function ()
+		local block = self.blocks[idx]
+		idx = idx - 1
+		return block
+	end
+end
+
 function Blockchain:__len()
 	return #self.blocks
 end
