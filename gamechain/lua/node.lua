@@ -137,8 +137,8 @@ function Node:handle_blockchain(sender, token, chain)
 		return
 	end
 
+	self.chain = Blockchain(chain)
 	-- TODO: Find latest producer list in chain
-	self.chain = chain
 end
 
 function Node:handle_block_forged(sender, block)

@@ -1,7 +1,11 @@
 require("busted.runner")()
 
+local Block = require("gamechain.block")
+local Blockchain = require("gamechain.blockchain")
+local date = require("date")
 local message = require("gamechain.message")
 local Node = require("gamechain.node")
+local PrivateKey = require("gamechain.privatekey")
 
 local TestNetworker = {}
 TestNetworker.__index = TestNetworker
@@ -120,5 +124,69 @@ describe("node", function ()
 		local test_data = { "foobar", 5 }
 		node:handle_message(sender, message.app_defined(table.unpack(test_data)))
 		assert.are.same(received_app_defined, test_data)
+	end)
+
+	describe("blockchain", function ()
+		local privkey
+		setup(function ()
+			privkey = PrivateKey()
+		end)
+
+		local function create_block(data, prev_hash)
+			local proposed = {
+				timestamp = date(true),
+				data = data,
+				previous_hash = prev_hash,
+			}
+
+			proposed.hash = Block.compute_hash(proposed)
+			proposed.signatures = { privkey:sign(proposed.hash) }
+			return Block(proposed)
+		end
+
+		local function create_blockchain(...)
+			local last = nil
+			local blocks = {}
+			for _, data in ipairs { ... } do
+				local block = create_block(data, last)
+				blocks[#blocks + 1] = block
+				last = block.hash
+			end
+
+			return Blockchain(blocks)
+		end
+
+		it("should start empty", function ()
+			local node = Node { networker = networker }
+			assert.is.equal(#node.chain, 0)
+		end)
+
+		it("should be initializable", function ()
+			local chain = create_blockchain("foobar", "fuzzbuzz")
+			local node = Node { networker = networker, chain = chain }
+			assert.is.equal(node.chain, chain)
+		end)
+		
+		it("should be sent to any peer who requests it", function ()
+			local chain = create_blockchain("foobar", "fuzzbuzz")
+			local node = Node { networker = networker, chain = chain }
+			local token = "foobar"
+			local sender = "test_sender"
+			node:handle_message(sender, message.request_blockchain(token))
+
+			local sent = networker.sent[1]
+			assert.are.equal(sent.dest, sender)
+			assert.are.same(message.decode(sent.bytes), message.blockchain(token, chain))
+		end)
+		
+		it("should be loaded from network", function ()
+			local node = Node { networker = networker }
+			local chain = create_blockchain("foobar", "fuzzbuzz")
+			assert.are_not.equal(node.chain, chain)
+
+			local sender = "test_sender"
+			node:handle_message(sender, message.blockchain(nil, chain))
+			assert.are.equal(node.chain, chain)
+		end)
 	end)
 end)
