@@ -18,7 +18,7 @@ jobs:
         run: luarocks make --local gamechain-demo-*.rockspec
       
       - name: Install test runner
-        run: sudo luarocks install busted
+        run: luarocks install --local busted
       
       - name: Run tests
         run: busted -o utfTerminal
