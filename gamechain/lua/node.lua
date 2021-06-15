@@ -141,7 +141,6 @@ function Node:_handle_blockchain(sender, token, blocks)
 	end
 
 	self:_set_blockchain(Blockchain(blocks))
-	-- TODO: Find latest producer list in chain
 end
 
 function Node:_set_blockchain(chain)
