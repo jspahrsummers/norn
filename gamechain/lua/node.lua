@@ -1,5 +1,8 @@
 local Blockchain = require("gamechain.blockchain")
 local message = require("gamechain.message")
+local opcode = require("gamechain.opcode")
+local Producer = require("gamechain.producer")
+local PublicKey = require("gamechain.publickey")
 
 local Node = {}
 Node.__index = Node
@@ -130,15 +133,37 @@ function Node:_handle_request_blockchain(sender, token)
 	self.networker:send(sender, message.encode(msg))
 end
 
-function Node:_handle_blockchain(sender, token, chain)
+function Node:_handle_blockchain(sender, token, blocks)
 	-- TODO: This should reconcile the multiple blockchains somehow (e.g., longest chain rule, or build consensus using N different chains). For now, we just trust the first one we receive.
 	if #self.chain > 0 then
 		io.stderr:write(string.format("Peer node %s tried to replace our blockchain with:\n%s", sender, chain))
 		return
 	end
 
-	self.chain = Blockchain(chain)
+	self:_set_blockchain(Blockchain(blocks))
 	-- TODO: Find latest producer list in chain
+end
+
+function Node:_set_blockchain(chain)
+	if rawequal(self.chain, chain) then
+		return
+	end
+
+	self.chain = chain
+	self.known_producers = {}
+
+	for block in self.chain:traverse_latest() do
+		local op = opcode.decode(block.data)
+		if op[1] == opcode.PRODUCERS_CHANGED then
+			for row in op[2] do
+				local address, wallet_pubkey, wallet_balance = table.unpack(row)
+				self.known_producers[#self.known_producers + 1] = Producer {
+					peer_address = address,
+					wallet_pubkey = PublicKey(wallet_pubkey)
+				}
+			end
+		end
+	end
 end
 
 function Node:_handle_block_forged(sender, block)
