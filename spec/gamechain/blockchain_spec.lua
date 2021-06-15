@@ -13,15 +13,7 @@ describe("blockchain", function ()
 	end)
 
 	local function create_block(data, prev_hash)
-		local proposed = {
-			timestamp = date(true),
-			data = data,
-			previous_hash = prev_hash,
-		}
-
-		proposed.hash = Block.compute_hash(proposed)
-		proposed.signatures = { privkey:sign(proposed.hash) }
-		return Block(proposed)
+		return Block.forge { data = data, previous_hash = prev_hash, keys = { privkey }}
 	end
 
 	it("should initialize with no blocks", function ()

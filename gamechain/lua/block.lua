@@ -22,6 +22,28 @@ function Block:init()
 	assert(#self.signatures > 0, "Block must have signatures from forging producers")
 end
 
+function Block.forge(proposed)
+	if not proposed.timestamp then
+		proposed.timestamp = date(true)
+	end
+
+	if not proposed.hash then
+		proposed.hash = Block.compute_hash(proposed)
+	end
+
+	assert(proposed.keys, "Keys must be provided to sign block to be forged")
+	assert(#proposed.keys > 0, "Keys must be provided to sign block to be forged")
+	assert(not proposed.signatures, "Block to be forged should not be signed yet")
+
+	proposed.signatures = {}
+	for _, key in pairs(proposed.keys) do
+		proposed.signatures[#proposed.signatures + 1] = key:sign(proposed.hash)
+	end
+
+	proposed.keys = nil
+	return Block(proposed)
+end
+
 function Block:verify_signers(keys_orig)
 	local keys_copy = { table.unpack(keys_orig) }
 	local found = 0

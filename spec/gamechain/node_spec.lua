@@ -132,23 +132,11 @@ describe("node", function ()
 			privkey = PrivateKey()
 		end)
 
-		local function create_block(data, prev_hash)
-			local proposed = {
-				timestamp = date(true),
-				data = data,
-				previous_hash = prev_hash,
-			}
-
-			proposed.hash = Block.compute_hash(proposed)
-			proposed.signatures = { privkey:sign(proposed.hash) }
-			return Block(proposed)
-		end
-
 		local function create_blockchain(...)
 			local last = nil
 			local blocks = {}
 			for _, data in ipairs { ... } do
-				local block = create_block(data, last)
+				local block = Block.forge { data = data, previous_hash = last, keys = { privkey }}
 				blocks[#blocks + 1] = block
 				last = block.hash
 			end
