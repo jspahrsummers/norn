@@ -32,6 +32,10 @@ function PublicKey:public_key()
 	return self
 end
 
+function PublicKey:__eq(other)
+	return tostring(self) == tostring(other)
+end
+
 function PublicKey:__tostring()
 	return self.pkey:toPEM("public")
 end

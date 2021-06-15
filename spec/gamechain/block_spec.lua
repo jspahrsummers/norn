@@ -75,6 +75,41 @@ describe("block", function ()
 		assert.are.same(Block(proposed), proposed)
 	end)
 
+	it("should compare equal to itself", function ()
+		local proposed = {
+			timestamp = date(true),
+			data = "foobar",
+		}
+
+		proposed.hash = Block.compute_hash(proposed)
+		proposed.signatures = { keys[1]:sign(proposed.hash) }
+
+		local block = Block(proposed)
+		assert.are.equal(block, block)
+	end)
+
+	it("should not compare equal to different block", function ()
+		local proposed = {
+			timestamp = date(true),
+			data = "foobar",
+		}
+
+		proposed.hash = Block.compute_hash(proposed)
+		proposed.signatures = { keys[1]:sign(proposed.hash) }
+		local a = Block(proposed)
+
+		proposed = {
+			timestamp = date(true),
+			data = "fuzzbuzz",
+		}
+
+		proposed.hash = Block.compute_hash(proposed)
+		proposed.signatures = { keys[1]:sign(proposed.hash) }
+		local b = Block(proposed)
+
+		assert.are_not.equal(a, b)
+	end)
+
 	it("should instantiate when additional signatures are provided", function ()
 		local proposed = {
 			timestamp = date(true),

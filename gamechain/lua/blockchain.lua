@@ -52,6 +52,21 @@ function Blockchain:__len()
 	return #self.blocks
 end
 
+function Blockchain:__eq(other)
+	if #self.blocks ~= #other.blocks then
+		return false
+	end
+
+	-- Check for deviations starting with the most recent blocks, because older history is more likely to be shared in common.
+	for i = #self.blocks, 1, -1 do
+		if self.blocks[i] ~= other.blocks[i] then
+			return false
+		end
+	end
+
+	return true
+end
+
 function Blockchain:__tostring()
 	s = "Blockchain:"
 	for _, v in ipairs(self.blocks) do

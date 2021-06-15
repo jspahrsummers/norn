@@ -50,6 +50,10 @@ function Block.compute_hash(obj)
 	return hash(obj.timestamp:fmt("${iso}"), obj.previous_hash or "", obj.data)
 end
 
+function Block:__eq(other)
+	return self.hash == other.hash and self.timestamp == other.timestamp and self.previous_hash == other.previous_hash and self.signatures == other.signatures and self.data == other.data
+end
+
 function Block:__tostring()
 	return string.format("%s: %s", self.timestamp, tohex(self.hash))
 end

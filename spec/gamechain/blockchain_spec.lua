@@ -65,4 +65,22 @@ describe("blockchain", function ()
 		local third = create_block("blahblah", first.hash)
 		assert.has_error(function () Blockchain { first, second, third } end)
 	end)
+
+	it("should compare equal to itself", function ()
+		local chain = Blockchain { create_block("foobar") }
+		assert.are.equal(chain, chain)
+	end)
+
+	it("should not be equal to different chain", function ()
+		local a = Blockchain { create_block("foobar") }
+		local b = Blockchain { create_block("fuzzbuzz") }
+		assert.are_not.equal(a, b)
+	end)
+
+	it("should not be equal to different chain with common history", function ()
+		local first = create_block("first shared block")
+		local a = Blockchain { first, create_block("foobar", first.hash) }
+		local b = Blockchain { first, create_block("fuzzbuzz", first.hash) }
+		assert.are_not.equal(a, b)
+	end)
 end)
