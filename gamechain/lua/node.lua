@@ -4,9 +4,13 @@ local opcode = require("gamechain.opcode")
 local Producer = require("gamechain.producer")
 local PublicKey = require("gamechain.publickey")
 local tohex = require("gamechain.tohex")
+local timer = require("gamechain.timer")
 
 local Node = {}
 Node.__index = Node
+Node.PEER_PING_MIN_INTERVAL = 50
+Node.PEER_PING_MAX_JITTER = 20
+Node.PEER_PING_TIMEOUT = 120
 
 setmetatable(Node, {
 	__call = function (cls, obj, ...)
@@ -19,7 +23,7 @@ setmetatable(Node, {
 local function peer_list_to_set(peer_list)
 	local set = {}
 	for _, peer in pairs(peer_list) do
-		set[peer] = true
+		set[peer] = os.time()
 	end
 
 	return set
@@ -60,12 +64,47 @@ end
 --- Runs the node logic forever, or until an error is raised.
 -- This function never returns normally.
 function Node:run()
-	while true do
-		local sender, bytes = self.networker:recv()
-		self.peer_set[sender] = true
+	math.randomseed(os.time())
 
-		local msg = message.decode(bytes)
-		self:handle_message(sender, msg)
+	local peer_ping_interval = self.PEER_PING_MIN_INTERVAL + math.random() * self.PEER_PING_MAX_JITTER
+
+	local coros = {
+		self:_recv_loop(),
+		timer.every(peer_ping_interval, function () self:_ping_peers() end),
+	}
+
+	while true do
+		for _, coro in ipairs(coros) do
+			coroutine.resume(coro)
+		end
+	end
+end
+
+function Node:_recv_loop()
+	return coroutine.create(function ()
+		while true do
+			local sender, bytes = self.networker:recv()
+			self.peer_set[sender] = true
+
+			local msg = message.decode(bytes)
+			self:handle_message(sender, msg)
+
+			coroutine.yield()
+		end
+	end)
+end
+
+function Node:_ping_peers()
+	local current_time = os.time()
+	for peer, last_seen in pairs(self.peer_set) do
+		if os.difftime(current_time, last_seen) >= self.PEER_PING_TIMEOUT then
+			self.peer_set[peer] = nil
+		else
+			local msg = message.ping(current_time)
+			self.networker:send(peer, message.encode(msg))
+		end
+
+		coroutine.yield()
 	end
 end
 
@@ -110,7 +149,9 @@ function Node:_handle_ping(sender, token)
 end
 
 function Node:_handle_pong(sender, token)
-	-- TODO
+	if self.peer_set[sender] then
+		self.peer_set[sender] = os.time()
+	end
 end
 
 function Node:_handle_request_peer_list(sender, token)
@@ -120,7 +161,7 @@ end
 
 function Node:_handle_peer_list(sender, maybe_token, peers)
 	for _, peer in pairs(peers) do
-		self.peer_set[peer] = true
+		self.peer_set[peer] = os.time()
 	end
 end
 
