@@ -138,7 +138,8 @@ describe("node", function ()
 		local function create_blockchain(...)
 			local last = nil
 			local blocks = {}
-			for _, data in ipairs { ... } do
+			for _, op in ipairs { ... } do
+				local data = opcode.encode(op)
 				local block = Block.forge { data = data, previous_hash = last, keys = { privkey }}
 				blocks[#blocks + 1] = block
 				last = block.hash
@@ -153,13 +154,13 @@ describe("node", function ()
 		end)
 
 		it("should be initializable", function ()
-			local chain = create_blockchain("foobar", "fuzzbuzz")
+			local chain = create_blockchain(opcode.app_defined("foobar"), opcode.app_defined("fuzzbuzz"))
 			local node = Node { networker = networker, chain = chain }
 			assert.is.equal(node.chain, chain)
 		end)
 		
 		it("should be sent to any peer who requests it", function ()
-			local chain = create_blockchain("foobar", "fuzzbuzz")
+			local chain = create_blockchain(opcode.app_defined("foobar"), opcode.app_defined("fuzzbuzz"))
 			local node = Node { networker = networker, chain = chain }
 			local token = "foobar"
 			local sender = "test_sender"
@@ -172,7 +173,7 @@ describe("node", function ()
 		
 		it("should be loaded from network", function ()
 			local node = Node { networker = networker }
-			local chain = create_blockchain("foobar", "fuzzbuzz")
+			local chain = create_blockchain(opcode.app_defined("foobar"), opcode.app_defined("fuzzbuzz"))
 			assert.are_not.equal(node.chain, chain)
 
 			local sender = "test_sender"
@@ -186,8 +187,7 @@ describe("node", function ()
 				["192.168.0.2"] = Wallet { key = PrivateKey() },
 			}
 
-			local op = opcode.encode(opcode.producers_changed(producers_and_wallets))
-			local chain = create_blockchain(op)
+			local chain = create_blockchain(opcode.producers_changed(producers_and_wallets))
 			local node = Node { networker = networker, chain = chain }
 
 			local expected_producers = {}
