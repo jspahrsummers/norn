@@ -97,7 +97,7 @@ function Node:handle_message(sender, msg)
 end
 
 function Node:handle_app_defined(sender, ...)
-	-- Does nothing by default. A custom handler can be provided at init time.
+	-- Does nothing by default. A custom handler can be provided at init time to override this method.
 	io.stderr:write("Node received app-defined message it doesn't know how to handle")
 end
 

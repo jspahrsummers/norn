@@ -107,4 +107,18 @@ describe("node", function ()
 		local all_peers = { "a", "b", "c", "d", "e", "f" }
 		assert.are.same(message.decode(sent.bytes), message.peer_list(token, all_peers))
 	end)
+
+	it("should support custom handling of app-defined messages", function ()
+		local sender = "test_sender"
+		local received_app_defined = nil
+		local function app_defined_handler(node, _sender, ...)
+			assert.are.equal(sender, _sender)
+			received_app_defined = { ... }
+		end
+
+		local node = Node { networker = networker, handle_app_defined = app_defined_handler }
+		local test_data = { "foobar", 5 }
+		node:handle_message(sender, message.app_defined(table.unpack(test_data)))
+		assert.are.same(received_app_defined, test_data)
+	end)
 end)
