@@ -78,13 +78,13 @@ end
 function Node:handle_message(sender, msg)
 	local handlers = {
 		[message.APP_DEFINED] = self.handle_app_defined,
-		[message.PING] = self.handle_ping,
-		[message.PONG] = self.handle_pong,
-		[message.REQUEST_PEER_LIST] = self.handle_request_peer_list,
-		[message.PEER_LIST] = self.handle_peer_list,
-		[message.REQUEST_BLOCKCHAIN] = self.handle_request_blockchain,
-		[message.BLOCKCHAIN] = self.handle_blockchain,
-		[message.BLOCK_FORGED] = self.handle_block_forged,
+		[message.PING] = self._handle_ping,
+		[message.PONG] = self._handle_pong,
+		[message.REQUEST_PEER_LIST] = self._handle_request_peer_list,
+		[message.PEER_LIST] = self._handle_peer_list,
+		[message.REQUEST_BLOCKCHAIN] = self._handle_request_blockchain,
+		[message.BLOCKCHAIN] = self._handle_blockchain,
+		[message.BLOCK_FORGED] = self._handle_block_forged,
 	}
 
 	local name = msg[1]
@@ -101,27 +101,27 @@ function Node:handle_app_defined(sender, ...)
 	io.stderr:write("Node received app-defined message it doesn't know how to handle")
 end
 
-function Node:handle_ping(sender, token)
+function Node:_handle_ping(sender, token)
 	local msg = message.pong(token)
 	self.networker:send(sender, message.encode(msg))
 end
 
-function Node:handle_pong(sender, token)
+function Node:_handle_pong(sender, token)
 	-- TODO
 end
 
-function Node:handle_request_peer_list(sender, token)
+function Node:_handle_request_peer_list(sender, token)
 	local msg = message.peer_list(token, peer_set_to_list(self.peer_set))
 	self.networker:send(sender, message.encode(msg))
 end
 
-function Node:handle_peer_list(sender, maybe_token, peers)
+function Node:_handle_peer_list(sender, maybe_token, peers)
 	for _, peer in pairs(peers) do
 		self.peer_set[peer] = true
 	end
 end
 
-function Node:handle_request_blockchain(sender, token)
+function Node:_handle_request_blockchain(sender, token)
 	if not self.chain then
 		return
 	end
@@ -130,7 +130,7 @@ function Node:handle_request_blockchain(sender, token)
 	self.networker:send(sender, message.encode(msg))
 end
 
-function Node:handle_blockchain(sender, token, chain)
+function Node:_handle_blockchain(sender, token, chain)
 	-- TODO: This should reconcile the multiple blockchains somehow (e.g., longest chain rule, or build consensus using N different chains). For now, we just trust the first one we receive.
 	if #self.chain > 0 then
 		io.stderr:write(string.format("Peer node %s tried to replace our blockchain with:\n%s", sender, chain))
@@ -141,7 +141,7 @@ function Node:handle_blockchain(sender, token, chain)
 	-- TODO: Find latest producer list in chain
 end
 
-function Node:handle_block_forged(sender, block)
+function Node:_handle_block_forged(sender, block)
 	if not block:verify_signers(producer_keys(self.known_producers)) then
 		io.stderr.write(string.format("Missing consensus for block sent by peer node %s:\n%s", sender, block))
 		return
