@@ -12,6 +12,34 @@ setmetatable(Node, {
 	end,
 })
 
+local function peer_list_to_set(peer_list)
+	local set = {}
+	for _, peer in pairs(peer_list) do
+		set[peer] = true
+	end
+
+	return set
+end
+
+local function peer_set_to_list(peer_set)
+	local list = {}
+	for peer, _ in pairs(peer_set) do
+		list[#list + 1] = peer
+	end
+
+	table.sort(list)
+	return list
+end
+
+local function producer_keys(producers)
+	local keys = {}
+	for _, producer in pairs(producers) do
+		keys[#keys + 1] = producer.wallet_pubkey
+	end
+
+	return keys
+end
+
 function Node:init()
 	assert(self.networker, "Node must be created with a networker to use")
 
@@ -83,11 +111,11 @@ function Node:handle_pong(sender, token)
 end
 
 function Node:handle_request_peer_list(sender, token)
-	local msg = message.peer_list(peer_set_to_list(self.peer_set), token)
+	local msg = message.peer_list(token, peer_set_to_list(self.peer_set))
 	self.networker:send(sender, message.encode(msg))
 end
 
-function Node:handle_peer_list(sender, peers, maybe_token)
+function Node:handle_peer_list(sender, maybe_token, peers)
 	for _, peer in pairs(peers) do
 		self.peer_set[peer] = true
 	end
@@ -123,33 +151,6 @@ function Node:handle_block_forged(sender, block)
 		io.stderr.write(string.format("Peer node %s tried to add an incompatible block to our chain:\n%s", sender, block))
 		return
 	end
-end
-
-local function peer_list_to_set(peer_list)
-	local set = {}
-	for _, peer in pairs(peer_list) do
-		set[peer] = true
-	end
-
-	return set
-end
-
-local function peer_set_to_list(peer_set)
-	local list = {}
-	for peer, _ in pairs(peer_set) do
-		list[#list + 1] = peer
-	end
-
-	return list
-end
-
-local function producer_keys(producers)
-	local keys = {}
-	for _, producer in pairs(producers) do
-		keys[#keys + 1] = producer.wallet_pubkey
-	end
-
-	return keys
 end
 
 return Node

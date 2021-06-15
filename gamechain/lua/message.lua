@@ -30,8 +30,8 @@ end
 --- Contains the list of peers for the sending node.
 -- May be sent in response to REQUEST_PEER_LIST, in which case the originating token will be included, but nodes could also broadcast this without being prompted.
 M.PEER_LIST = "peer-list"
-function M.peer_list(peers, maybe_token)
-	return { M.PEER_LIST, maybe_token or "", table.unpack(peers) }
+function M.peer_list(maybe_token, peers)
+	return { M.PEER_LIST, maybe_token or "", peers }
 end
 
 --- A staking request from a node that would like to become a producer.
@@ -96,7 +96,7 @@ end
 --- Response to a blockchain request.
 M.BLOCKCHAIN = "blockchain"
 function M.blockchain(token, chain)
-	return { M.BLOCKCHAIN, token, table.unpack(chain.blocks) }
+	return { M.BLOCKCHAIN, token, chain.blocks }
 end
 
 --- Sent to all nodes when producers have forged a new block for the chain.

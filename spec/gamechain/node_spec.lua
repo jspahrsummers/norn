@@ -63,4 +63,48 @@ describe("node", function ()
 		assert.are.equal(sent.dest, sender)
 		assert.are.same(message.decode(sent.bytes), message.pong(token))
 	end)
+
+	it("should fulfill peer list request", function ()
+		local peers = { "a", "b", "c" }
+		local node = Node { networker = networker, peer_list = peers }
+		local token = "foobar"
+		local sender = "test_sender"
+		node:handle_message(sender, message.request_peer_list(token))
+
+		local sent = networker.sent[1]
+		assert.are.equal(sent.dest, sender)
+		assert.are.same(message.decode(sent.bytes), message.peer_list(token, peers))
+	end)
+
+	it("should deduplicate peer list", function ()
+		local node = Node {
+			networker = networker,
+			peer_list = { "a", "a", "b", "c", "c", "c" }
+		}
+
+		local token = "foobar"
+		local sender = "test_sender"
+		node:handle_message(sender, message.request_peer_list(token))
+
+		local sent = networker.sent[1]
+		assert.are.equal(sent.dest, sender)
+		assert.are.same(message.decode(sent.bytes), message.peer_list(token, {"a", "b", "c"}))
+	end)
+
+	it("should merge received peer list", function ()
+		local original_peers = { "a", "d", "e" }
+		local node = Node { networker = networker, peer_list = original_peers }
+
+		local added_peers = { "f", "b", "c", }
+		local sender = "test_sender"
+		node:handle_message(sender, message.peer_list(nil, added_peers))
+
+		-- Request this node's peer list now.
+		local token = "foobar"
+		node:handle_message(sender, message.request_peer_list(token))
+
+		local sent = networker.sent[1]
+		local all_peers = { "a", "b", "c", "d", "e", "f" }
+		assert.are.same(message.decode(sent.bytes), message.peer_list(token, all_peers))
+	end)
 end)

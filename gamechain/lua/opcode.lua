@@ -18,7 +18,7 @@ function M.producers_changed(new_producers_and_wallets)
 		list[#list + 1] = { address, tostring(wallet:public_key()), wallet.balance }
 	end
 
-	return { M.PRODUCERS_CHANGED, table.unpack(list) }
+	return { M.PRODUCERS_CHANGED, list }
 end
 
 --- Written when a new wallet is created.
