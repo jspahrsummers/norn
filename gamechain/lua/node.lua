@@ -54,8 +54,7 @@ function Node:init()
 		self.peer_set = {}
 	end
 
-	self.known_producers = {}
-	self.chain = self.chain or Blockchain {}
+	self:_set_blockchain(self.chain or Blockchain {})
 end
 
 --- Runs the node logic forever, or until an error is raised.
@@ -146,10 +145,6 @@ function Node:_handle_blockchain(sender, token, blocks)
 end
 
 function Node:_set_blockchain(chain)
-	if rawequal(self.chain, chain) then
-		return
-	end
-
 	self.chain = chain
 	self.known_producers = {}
 
@@ -158,7 +153,7 @@ function Node:_set_blockchain(chain)
 		if not op then
 			io.stderr:write(string.format("Unable to parse block %s", tohex(block.hash)))
 		elseif op[1] == opcode.PRODUCERS_CHANGED then
-			for row in op[2] do
+			for _, row in pairs(op[2]) do
 				local address, wallet_pubkey, wallet_balance = table.unpack(row)
 				self.known_producers[#self.known_producers + 1] = Producer {
 					peer_address = address,

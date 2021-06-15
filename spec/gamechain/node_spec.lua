@@ -5,7 +5,10 @@ local Blockchain = require("gamechain.blockchain")
 local date = require("date")
 local message = require("gamechain.message")
 local Node = require("gamechain.node")
+local opcode = require("gamechain.opcode")
 local PrivateKey = require("gamechain.privatekey")
+local Producer = require("gamechain.producer")
+local Wallet = require("gamechain.wallet")
 
 local TestNetworker = {}
 TestNetworker.__index = TestNetworker
@@ -175,6 +178,27 @@ describe("node", function ()
 			local sender = "test_sender"
 			node:handle_message(sender, message.blockchain(nil, chain))
 			assert.are.equal(node.chain, chain)
+		end)
+
+		it("should be parsed for producer list", function ()
+			local producers_and_wallets = {
+				["192.168.0.1"] = Wallet { key = PrivateKey() },
+				["192.168.0.2"] = Wallet { key = PrivateKey() },
+			}
+
+			local op = opcode.encode(opcode.producers_changed(producers_and_wallets))
+			local chain = create_blockchain(op)
+			local node = Node { networker = networker, chain = chain }
+
+			local expected_producers = {}
+			for address, wallet in pairs(producers_and_wallets) do
+				expected_producers[#expected_producers + 1] = Producer {
+					peer_address = address,
+					wallet_pubkey = wallet:public_key(),
+				}
+			end
+
+			assert.are.same(node.known_producers, expected_producers)
 		end)
 	end)
 end)
