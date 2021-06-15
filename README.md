@@ -35,9 +35,16 @@ Security- and cryptocurrency-focused blockchains _have_ been occasionally combin
 
 These aren't good benchmarks for real-time multiplayer gaming. _gamechain_ is intended to implement peer-to-peer synchronization for real-time games that are mostly played client-side (e.g., on desktops, consoles, or phones).
 
-More flexible blockchain implementations do exist, including [eosio](https://eos.io/) and [Hypercore Protocol](https://hypercore-protocol.org/), but I haven't found any built with _embedding_ in mind. To be truly useful as a gaming substrate, the implementation can't require users to run daemons or faff about with SysOps.
+Plus, this project is just a good learning exercise. :grin:
 
-And finally, this project is just a good learning exercise. :grin:
+### Other alternatives
+
+Flexible, low-latency blockchain implementations do exist, but I haven't found any that quite fit the niche that _gamechain_ is attempting to fill:
+
+* [eosio](https://eos.io/) seems highly customizable and reasonably low-latency, but is not really built with embedding in mind. It appears to require users to run a daemon, and implements its own smart contract language (great for flexibility, but abstraction overkill for games). Games can't require users to be SysOps.
+* [Hypercore Protocol](https://hypercore-protocol.org/) looks simple and very lightweight, and is available via Node.js libraries—while not _quite_ as suited to games as Lua is, JavaScript is still highly embeddable and could work. Unfortunately, it doesn't include any consensus mechanisms, which distributed gaming requires (for fairness and to mitigate cheating). Hypercore may nonetheless still be useful as a network topology or storage abstraction.
+
+Know of any others? I'd love to hear about them! Please [open an issue](https://github.com/jspahrsummers/gamechain/issues/new), including a link, a little summary, and your thoughts on their applicability to multiplayer gaming.
 
 ## Getting started
 
