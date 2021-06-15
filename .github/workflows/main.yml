@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Install Lua and LuaRocks
-        run: sudo apt-get install lua5.2 luarocks
+        run: apt-get install lua5.2 luarocks
 
       - name: Make gamechain
         run: luarocks make --local gamechain-0.*.rockspec
