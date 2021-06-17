@@ -20,6 +20,7 @@ build = {
    modules = {
       ["gamechain.block"] = "gamechain/lua/block.lua",
       ["gamechain.blockchain"] = "gamechain/lua/blockchain.lua",
+      ["gamechain.clock"] = "gamechain/lua/clock.lua",
       ["gamechain.consensus"] = "gamechain/lua/consensus.lua",
       ["gamechain.hash"] = "gamechain/lua/hash.lua",
       ["gamechain.message"] = "gamechain/lua/message.lua",
