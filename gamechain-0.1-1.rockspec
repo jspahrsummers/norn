@@ -22,6 +22,7 @@ build = {
       ["gamechain.blockchain"] = "gamechain/lua/blockchain.lua",
       ["gamechain.clock"] = "gamechain/lua/clock.lua",
       ["gamechain.consensus"] = "gamechain/lua/consensus.lua",
+      ["gamechain.functional"] = "gamechain/lua/functional.lua",
       ["gamechain.hash"] = "gamechain/lua/hash.lua",
       ["gamechain.message"] = "gamechain/lua/message.lua",
       ["gamechain.networker"] = "gamechain/lua/networker.lua",
