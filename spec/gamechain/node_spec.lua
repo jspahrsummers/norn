@@ -138,6 +138,8 @@ describe("node", function ()
 		end
 		assert.are_equal(#networker.sent, 2)
 
+		table.sort(networker.sent, function (a, b) return a.dest < b.dest end)
+
 		local sent = networker.sent[1]
 		assert.equals(message.decode(sent.bytes)[1], message.PING)
 		assert.equals(sent.dest, "a")
@@ -145,6 +147,38 @@ describe("node", function ()
 		local sent = networker.sent[2]
 		assert.equals(message.decode(sent.bytes)[1], message.PING)
 		assert.equals(sent.dest, "b")
+	end)
+
+	it("should drop peers that fail to communicate in time", function ()
+		local c = Clock.virtual()
+		local peers = { "a", "b" }
+		local node = Node { networker = networker, peer_list = peers, clock = c }
+
+		local coro = coroutine.create(function ()
+			node:run()
+		end)
+
+		-- Set up timers, etc.
+		coroutine.resume(coro)
+
+		c:advance(EXPECTED_PEER_PING_INTERVAL)
+
+		networker.recv_queue[#networker.recv_queue + 1] = { "b", message.encode(message.pong(nil)) }
+		assert.is.not_nil(node.peer_set["a"])
+		assert.is.not_nil(node.peer_set["b"])
+
+		c:advance(Node.PEER_PING_TIMEOUT)
+
+		local t = os.time()
+		while node.peer_set["a"] and os.difftime(os.time(), t) < 3 do
+			coroutine.resume(coro)
+		end
+
+		assert.is_nil(node.peer_set["a"])
+		assert.is.not_nil(node.peer_set["b"])
+
+		local peer, last_seen = next(node.peer_set)
+		assert.equals(peer, "b")
 	end)
 
 	it("should support custom handling of app-defined messages", function ()
