@@ -49,9 +49,8 @@ function Node:init()
 
 	if self.peer_list then
 		self.peer_set = {}
-		local t = self.clock:now()
 		for _, peer in pairs(self.peer_list) do
-			self.peer_set[peer] = t
+			self.peer_set[peer] = 0
 		end
 
 		self.peer_list = nil
@@ -73,6 +72,10 @@ end
 -- This function never returns normally, but will regularly yield if wrapped into a coroutine.
 function Node:run()
 	math.randomseed(os.time())
+
+	for peer, _ in pairs(self.peer_set) do
+		self:_maybe_new_peer(peer, true)
+	end
 
 	if #self.chain.blocks == 0 then
 		self:_obtain_blockchain()
@@ -97,6 +100,7 @@ function Node:_recv_loop()
 	return coroutine.create(function ()
 		while true do
 			local sender, bytes = self.networker:recv()
+			self:_maybe_new_peer(sender)
 			self.peer_set[sender] = self.clock:now()
 
 			local msg = message.decode(bytes)
@@ -183,11 +187,8 @@ function Node:_handle_request_peer_list(sender, token)
 end
 
 function Node:_handle_peer_list(sender, maybe_token, peers)
-	local t = self.clock:now()
 	for _, peer in pairs(peers) do
-		if not self.peer_set[peer] then
-			self.peer_set[peer] = t
-		end
+		self:_maybe_new_peer(peer)
 	end
 end
 
@@ -250,6 +251,16 @@ function Node:_handle_block_forged(sender, block)
 		io.stderr.write(string.format("Peer node %s tried to add an incompatible block to our chain:\n%s", sender, block))
 		return
 	end
+end
+
+function Node:_maybe_new_peer(peer, force)
+	if self.peer_set[peer] and not force then
+		return
+	end
+
+	local t = self.clock:now()
+	self.peer_set[peer] = t
+	self.networker:send(peer, message.request_peer_list(t))
 end
 
 function Node:_broadcast(msg)
