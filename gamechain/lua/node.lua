@@ -1,4 +1,5 @@
 local Blockchain = require("gamechain.blockchain")
+local Clock = require("gamechain.clock")
 local message = require("gamechain.message")
 local opcode = require("gamechain.opcode")
 local Producer = require("gamechain.producer")
@@ -19,15 +20,6 @@ setmetatable(Node, {
 		return self
 	end,
 })
-
-local function peer_list_to_set(peer_list)
-	local set = {}
-	for _, peer in pairs(peer_list) do
-		set[peer] = os.time()
-	end
-
-	return set
-end
 
 local function peer_set_to_list(peer_set)
 	local list = {}
@@ -51,8 +43,17 @@ end
 function Node:init()
 	assert(self.networker, "Node must be created with a networker to use")
 
+	if not self.clock then
+		self.clock = Clock.os()
+	end
+
 	if self.peer_list then
-		self.peer_set = peer_list_to_set(self.peer_list)
+		self.peer_set = {}
+		local t = self.clock:now()
+		for _, peer in pairs(self.peer_list) do
+			self.peer_set[peer] = t
+		end
+
 		self.peer_list = nil
 	else
 		self.peer_set = {}
@@ -62,7 +63,7 @@ function Node:init()
 end
 
 --- Runs the node logic forever, or until an error is raised.
--- This function never returns normally.
+-- This function never returns normally, but will regularly yield if wrapped into a coroutine.
 function Node:run()
 	math.randomseed(os.time())
 
@@ -70,13 +71,15 @@ function Node:run()
 
 	local coros = {
 		self:_recv_loop(),
-		timer.every(peer_ping_interval, function () self:_ping_peers() end),
+		timer.every(peer_ping_interval, function () self:_ping_peers() end, self.clock),
 	}
 
 	while true do
 		for _, coro in ipairs(coros) do
 			coroutine.resume(coro)
 		end
+
+		coroutine.yield()
 	end
 end
 
@@ -84,7 +87,7 @@ function Node:_recv_loop()
 	return coroutine.create(function ()
 		while true do
 			local sender, bytes = self.networker:recv()
-			self.peer_set[sender] = true
+			self.peer_set[sender] = self.clock:now()
 
 			local msg = message.decode(bytes)
 			self:handle_message(sender, msg)
@@ -95,9 +98,10 @@ function Node:_recv_loop()
 end
 
 function Node:_ping_peers()
-	local current_time = os.time()
+	local current_time = self.clock:now()
 	for peer, last_seen in pairs(self.peer_set) do
-		if os.difftime(current_time, last_seen) >= self.PEER_PING_TIMEOUT then
+		if self.clock:diff_seconds(current_time, last_seen) >= self.PEER_PING_TIMEOUT then
+			-- Drop unresponsive peer.
 			self.peer_set[peer] = nil
 		else
 			local msg = message.ping(current_time)
@@ -149,9 +153,7 @@ function Node:_handle_ping(sender, token)
 end
 
 function Node:_handle_pong(sender, token)
-	if self.peer_set[sender] then
-		self.peer_set[sender] = os.time()
-	end
+	-- This sender was already marked as active in the receive loop.
 end
 
 function Node:_handle_request_peer_list(sender, token)
@@ -160,8 +162,11 @@ function Node:_handle_request_peer_list(sender, token)
 end
 
 function Node:_handle_peer_list(sender, maybe_token, peers)
+	local t = self.clock:now()
 	for _, peer in pairs(peers) do
-		self.peer_set[peer] = os.time()
+		if not self.peer_set[peer] then
+			self.peer_set[peer] = t
+		end
 	end
 end
 

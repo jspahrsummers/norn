@@ -2,6 +2,7 @@ require("busted.runner")()
 
 local Block = require("gamechain.block")
 local Blockchain = require("gamechain.blockchain")
+local Clock = require("gamechain.clock")
 local date = require("date")
 local message = require("gamechain.message")
 local Node = require("gamechain.node")
@@ -52,6 +53,8 @@ function TestNetworker:recv()
 
 	return table.unpack(table.remove(self.recv_queue, 1))
 end
+
+local EXPECTED_PEER_PING_INTERVAL = Node.PEER_PING_MIN_INTERVAL + Node.PEER_PING_MAX_JITTER + 1
 
 describe("node", function ()
 	local networker
@@ -113,6 +116,35 @@ describe("node", function ()
 		local sent = networker.sent[1]
 		local all_peers = { "a", "b", "c", "d", "e", "f" }
 		assert.are.same(message.decode(sent.bytes), message.peer_list(token, all_peers))
+	end)
+
+	it("should ping peer list after interval", function ()
+		local c = Clock.virtual()
+		local peers = { "a", "b" }
+		local node = Node { networker = networker, peer_list = peers, clock = c }
+
+		local coro = coroutine.create(function ()
+			node:run()
+		end)
+
+		coroutine.resume(coro)
+		assert.are_equal(#networker.sent, 0)
+
+		c:advance(EXPECTED_PEER_PING_INTERVAL)
+
+		local t = os.time()
+		while #networker.sent < 2 and os.difftime(os.time(), t) < 3 do
+			coroutine.resume(coro)
+		end
+		assert.are_equal(#networker.sent, 2)
+
+		local sent = networker.sent[1]
+		assert.equals(message.decode(sent.bytes)[1], message.PING)
+		assert.equals(sent.dest, "a")
+
+		local sent = networker.sent[2]
+		assert.equals(message.decode(sent.bytes)[1], message.PING)
+		assert.equals(sent.dest, "b")
 	end)
 
 	it("should support custom handling of app-defined messages", function ()
