@@ -15,7 +15,7 @@ M.PRODUCERS_CHANGED = "producers-changed"
 function M.producers_changed(new_producers_and_wallets)
 	local list = {}
 	for address, wallet in pairs(new_producers_and_wallets) do
-		list[#list + 1] = { address, tostring(wallet:public_key()), wallet.balance }
+		list[#list + 1] = { address, tostring(wallet.key:public_key()), wallet.balance }
 	end
 
 	return { M.PRODUCERS_CHANGED, list }

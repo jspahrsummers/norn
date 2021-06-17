@@ -31,6 +31,5 @@ build = {
       ["gamechain.publickey"] = "gamechain/lua/publickey.lua",
       ["gamechain.timer"] = "gamechain/lua/timer.lua",
       ["gamechain.tohex"] = "gamechain/lua/tohex.lua",
-      ["gamechain.wallet"] = "gamechain/lua/wallet.lua"
    }
 }

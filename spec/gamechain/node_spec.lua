@@ -8,7 +8,6 @@ local message = require("gamechain.message")
 local Node = require("gamechain.node")
 local opcode = require("gamechain.opcode")
 local PrivateKey = require("gamechain.privatekey")
-local Wallet = require("gamechain.wallet")
 
 local TestNetworker = {}
 TestNetworker.__index = TestNetworker
@@ -248,8 +247,8 @@ describe("node", function ()
 
 		it("should be parsed for producer list", function ()
 			local producers_and_wallets = {
-				["192.168.0.1"] = Wallet { key = PrivateKey() },
-				["192.168.0.2"] = Wallet { key = PrivateKey() },
+				["192.168.0.1"] = { key = PrivateKey(), balance = 0 },
+				["192.168.0.2"] = { key = PrivateKey(), balance = 0 },
 			}
 
 			local chain = create_blockchain(opcode.producers_changed(producers_and_wallets))
@@ -259,7 +258,7 @@ describe("node", function ()
 			for address, wallet in pairs(producers_and_wallets) do
 				expected_producers[#expected_producers + 1] = {
 					peer_address = address,
-					wallet_pubkey = wallet:public_key(),
+					wallet_pubkey = wallet.key:public_key(),
 				}
 			end
 
