@@ -1,5 +1,6 @@
 local Blockchain = require("gamechain.blockchain")
 local Clock = require("gamechain.clock")
+local functional = require("gamechain.functional")
 local message = require("gamechain.message")
 local opcode = require("gamechain.opcode")
 local PublicKey = require("gamechain.publickey")
@@ -58,7 +59,14 @@ function Node:init()
 		self.peer_set = {}
 	end
 
-	self:_set_blockchain(self.chain or Blockchain {})
+	self.is_producer = false
+	self.known_producers = {}
+	if self.chain then
+		-- Scrape the blockchain for producer list, etc.
+		self:_set_blockchain(self.chain)
+	else
+		self.chain = Blockchain {}
+	end
 end
 
 --- Runs the node logic forever, or until an error is raised.
@@ -66,8 +74,11 @@ end
 function Node:run()
 	math.randomseed(os.time())
 
-	local peer_ping_interval = self.PEER_PING_MIN_INTERVAL + math.random() * self.PEER_PING_MAX_JITTER
+	if #self.chain.blocks == 0 then
+		self:_obtain_blockchain()
+	end
 
+	local peer_ping_interval = self.PEER_PING_MIN_INTERVAL + math.random() * self.PEER_PING_MAX_JITTER
 	local coros = {
 		self:_recv_loop(),
 		timer.every(peer_ping_interval, function () self:_ping_peers() end, self.clock),
@@ -109,6 +120,17 @@ function Node:_ping_peers()
 
 		coroutine.yield()
 	end
+end
+
+function Node:_obtain_blockchain()
+	if not next(self.peer_set) then
+		io.stderr:write("No peers available to synchronize with, starting a new network")
+		-- TODO
+		return
+	end
+
+	-- TODO: Authenticate request with our own signature?
+	self:_broadcast(message.request_blockchain(nil))
 end
 
 function Node:create_wallet()
@@ -179,6 +201,11 @@ function Node:_handle_request_blockchain(sender, token)
 end
 
 function Node:_handle_blockchain(sender, token, blocks)
+	if self.is_producer then
+		io.stderr:write(string.format("As a producer, ignoring replacement blockchain from peer node %s:\n%s", sender, chain))
+		return
+	end
+	
 	-- TODO: This should reconcile the multiple blockchains somehow (e.g., longest chain rule, or build consensus using N different chains). For now, we just trust the first one we receive.
 	if #self.chain > 0 then
 		io.stderr:write(string.format("Peer node %s tried to replace our blockchain with:\n%s", sender, chain))
@@ -206,6 +233,11 @@ function Node:_set_blockchain(chain)
 			end
 		end
 	end
+
+	if not next(self.known_producers) then
+		io.stderr:write("Received existing blockchain, but no producers are elected")
+		-- TODO: Elect self as a producer
+	end
 end
 
 function Node:_handle_block_forged(sender, block)
@@ -217,6 +249,20 @@ function Node:_handle_block_forged(sender, block)
 	if not self.chain:add_block(block) then
 		io.stderr.write(string.format("Peer node %s tried to add an incompatible block to our chain:\n%s", sender, block))
 		return
+	end
+end
+
+function Node:_broadcast(msg)
+	local bytes = message.encode(msg)
+	for peer, _ in pairs(self.peer_set) do
+		self.networker:send(peer, bytes)
+	end
+end
+
+function Node:_multicast_to_producers(msg)
+	local bytes = message.encode(msg)
+	for _, producer in pairs(self.known_producers) do
+		self.networker:send(producer.peer_address, bytes)
 	end
 end
 
