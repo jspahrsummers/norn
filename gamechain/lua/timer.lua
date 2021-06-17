@@ -1,9 +1,15 @@
 local M = {}
 
-function M.once(seconds, f)
-	local start_time = os.time()
+local Clock = require("gamechain.clock")
+
+function M.once(seconds, f, clock)
+	if not clock then
+		clock = Clock.os()
+	end
+
+	local start_time = clock:now()
 	return coroutine.create(function ()
-		while os.difftime(os.time(), start_time) < seconds do
+		while clock:diff_seconds(clock:now(), start_time) < seconds do
 			coroutine.yield()
 		end
 
@@ -11,21 +17,30 @@ function M.once(seconds, f)
 	end)
 end
 
-function M.every(seconds, f)
-	local last_fired = os.time() 
+function M.every(seconds, f, clock)
+	if not clock then
+		clock = Clock.os()
+	end
+
+	local start_time = clock:now()
 	return coroutine.create(function ()
+		local fired = 0
+
 		while true do
-			local current_time = os.time()
-			while os.difftime(current_time, last_fired) < seconds do
+			local current_time = clock:now()
+			local should_have_fired = math.floor(clock:diff_seconds(current_time, start_time) / seconds)
+
+			if fired >= should_have_fired then
 				coroutine.yield()
-				current_time = os.time()
+			else
+				repeat
+					fired = fired + 1
+					f()
+
+					-- If the timer fires as fast as possible (i.e., zero seconds), we still want to yield between invocations
+					coroutine.yield()
+				until fired >= should_have_fired
 			end
-
-			last_fired = current_time
-			f()
-
-			-- If the timer fires as fast as possible (i.e., zero seconds), we still want to yield between invocations
-			coroutine.yield()
 		end
 	end)
 end
