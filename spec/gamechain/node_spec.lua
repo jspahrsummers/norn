@@ -8,7 +8,6 @@ local message = require("gamechain.message")
 local Node = require("gamechain.node")
 local opcode = require("gamechain.opcode")
 local PrivateKey = require("gamechain.privatekey")
-local Producer = require("gamechain.producer")
 local Wallet = require("gamechain.wallet")
 
 local TestNetworker = {}
@@ -258,7 +257,7 @@ describe("node", function ()
 
 			local expected_producers = {}
 			for address, wallet in pairs(producers_and_wallets) do
-				expected_producers[#expected_producers + 1] = Producer {
+				expected_producers[#expected_producers + 1] = {
 					peer_address = address,
 					wallet_pubkey = wallet:public_key(),
 				}

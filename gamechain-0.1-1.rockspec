@@ -28,7 +28,6 @@ build = {
       ["gamechain.node"] = "gamechain/lua/node.lua",
       ["gamechain.opcode"] = "gamechain/lua/opcode.lua",
       ["gamechain.privatekey"] = "gamechain/lua/privatekey.lua",
-      ["gamechain.producer"] = "gamechain/lua/producer.lua",
       ["gamechain.publickey"] = "gamechain/lua/publickey.lua",
       ["gamechain.timer"] = "gamechain/lua/timer.lua",
       ["gamechain.tohex"] = "gamechain/lua/tohex.lua",

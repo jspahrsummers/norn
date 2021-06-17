@@ -2,7 +2,6 @@ local Blockchain = require("gamechain.blockchain")
 local Clock = require("gamechain.clock")
 local message = require("gamechain.message")
 local opcode = require("gamechain.opcode")
-local Producer = require("gamechain.producer")
 local PublicKey = require("gamechain.publickey")
 local tohex = require("gamechain.tohex")
 local timer = require("gamechain.timer")
@@ -200,7 +199,7 @@ function Node:_set_blockchain(chain)
 		elseif op[1] == opcode.PRODUCERS_CHANGED then
 			for _, row in pairs(op[2]) do
 				local address, wallet_pubkey, wallet_balance = table.unpack(row)
-				self.known_producers[#self.known_producers + 1] = Producer {
+				self.known_producers[#self.known_producers + 1] = {
 					peer_address = address,
 					wallet_pubkey = PublicKey(wallet_pubkey)
 				}
