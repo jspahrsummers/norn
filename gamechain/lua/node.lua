@@ -260,7 +260,9 @@ function Node:_maybe_new_peer(peer, force)
 
 	local t = self.clock:now()
 	self.peer_set[peer] = t
-	self.networker:send(peer, message.request_peer_list(t))
+
+	local msg = message.request_peer_list(t)
+	self.networker:send(peer, message.encode(msg))
 end
 
 function Node:_broadcast(msg)

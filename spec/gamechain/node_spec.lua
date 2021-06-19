@@ -4,6 +4,7 @@ local Block = require("gamechain.block")
 local Blockchain = require("gamechain.blockchain")
 local Clock = require("gamechain.clock")
 local date = require("date")
+local functional = require("gamechain.functional")
 local message = require("gamechain.message")
 local Node = require("gamechain.node")
 local opcode = require("gamechain.opcode")
@@ -20,39 +21,18 @@ setmetatable(TestNetworker, {
 	end
 })
 
-function TestNetworker:init(...)
-	self.sent = {}
-	self.send_error = nil
-	self.recv_queue = {}
-	self.recv_error = nil
-end
-
-function TestNetworker:send(dest, bytes)
-	if self.send_error then
-		self.send_error = nil
-		error(self.send_error)
-	end
-
-	self.sent[#self.sent + 1] = {
-		dest = dest,
-		bytes = bytes
-	}
-end
-
-function TestNetworker:recv()
-	if self.recv_error then
-		self.recv_error = nil
-		error(self.recv_error)
-	end
-
-	while #self.recv_queue == 0 do
-		coroutine.yield()
-	end
-
-	return table.unpack(table.remove(self.recv_queue, 1))
-end
-
 local EXPECTED_PEER_PING_INTERVAL = Node.PEER_PING_MIN_INTERVAL + Node.PEER_PING_MAX_JITTER + 1
+
+local function resume_until(coro, predicate, message)
+	local t = os.time()
+	while not predicate() and os.difftime(os.time(), t) < 3 do
+		coroutine.resume(coro)
+	end
+
+	local b = predicate()
+	assert.is_true(b, message)
+	return b
+end
 
 describe("node", function ()
 	local networker
@@ -111,9 +91,13 @@ describe("node", function ()
 		local token = "foobar"
 		node:handle_message(sender, message.request_peer_list(token))
 
-		local sent = networker.sent[1]
 		local all_peers = { "a", "b", "c", "d", "e", "f" }
-		assert.are.same(message.decode(sent.bytes), message.peer_list(token, all_peers))
+		local k, v = functional.find(networker.sent, function (k, v)
+			return v.bytes == message.encode(message.peer_list(token, all_peers))
+		end)
+
+		assert.is_not_nil(k)
+		assert.is_not_nil(v)
 	end)
 
 	it("should ping peer list after interval", function ()
@@ -126,25 +110,28 @@ describe("node", function ()
 		end)
 
 		coroutine.resume(coro)
-		assert.are_equal(#networker.sent, 0)
 
 		c:advance(EXPECTED_PEER_PING_INTERVAL)
 
-		local t = os.time()
-		while #networker.sent < 2 and os.difftime(os.time(), t) < 3 do
-			coroutine.resume(coro)
+		local function is_ping(k, v)
+			return message.decode(v.bytes)[1] == message.PING
 		end
-		assert.are_equal(#networker.sent, 2)
 
-		table.sort(networker.sent, function (a, b) return a.dest < b.dest end)
+		resume_until(coro, function ()
+			return functional.count_keys(functional.find_all(networker.sent, is_ping), 2)
+		end, "Expected to find two ping messages")
 
-		local sent = networker.sent[1]
-		assert.equals(message.decode(sent.bytes)[1], message.PING)
-		assert.equals(sent.dest, "a")
+		local a = functional.find(networker.sent, function (k, v)
+			return v.dest == "a" and is_ping(k, v)
+		end)
 
-		local sent = networker.sent[2]
-		assert.equals(message.decode(sent.bytes)[1], message.PING)
-		assert.equals(sent.dest, "b")
+		assert.is_not_nil(a)
+
+		local b = functional.find(networker.sent, function (k, v)
+			return v.dest == "b" and is_ping(k, v)
+		end)
+
+		assert.is_not_nil(b)
 	end)
 
 	it("should drop peers that fail to communicate in time", function ()
@@ -266,3 +253,35 @@ describe("node", function ()
 		end)
 	end)
 end)
+
+function TestNetworker:init(...)
+	self.sent = {}
+	self.send_error = nil
+	self.recv_queue = {}
+	self.recv_error = nil
+end
+
+function TestNetworker:send(dest, bytes)
+	if self.send_error then
+		self.send_error = nil
+		error(self.send_error)
+	end
+
+	self.sent[#self.sent + 1] = {
+		dest = dest,
+		bytes = bytes
+	}
+end
+
+function TestNetworker:recv()
+	if self.recv_error then
+		self.recv_error = nil
+		error(self.recv_error)
+	end
+
+	while #self.recv_queue == 0 do
+		coroutine.yield()
+	end
+
+	return table.unpack(table.remove(self.recv_queue, 1))
+end
