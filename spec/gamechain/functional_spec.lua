@@ -32,3 +32,9 @@ describe("find", function ()
 		assert.is_true(v == 3 or v == -1.5)
 	end)
 end)
+
+pending("find_all", function ()
+end)
+
+pending("count_keys", function ()
+end)
