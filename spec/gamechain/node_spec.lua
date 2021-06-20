@@ -25,11 +25,13 @@ local EXPECTED_PEER_PING_INTERVAL = Node.PEER_PING_MIN_INTERVAL + Node.PEER_PING
 
 local function resume_until(coro, predicate, message)
 	local t = os.time()
-	while not predicate() and os.difftime(os.time(), t) < 3 do
+	local i = 1
+	while not predicate(i) and os.difftime(os.time(), t) < 3 do
 		coroutine.resume(coro)
+		i = i + 1
 	end
 
-	local b = predicate()
+	local b = predicate(nil)
 	assert.is_true(b, message)
 	return b
 end
@@ -110,7 +112,6 @@ describe("node", function ()
 		end)
 
 		coroutine.resume(coro)
-
 		c:advance(EXPECTED_PEER_PING_INTERVAL)
 
 		local function is_ping(k, v)
@@ -118,7 +119,7 @@ describe("node", function ()
 		end
 
 		resume_until(coro, function ()
-			return functional.count_keys(functional.find_all(networker.sent, is_ping), 2)
+			return functional.count_keys(functional.find_all(networker.sent, is_ping)) == 2
 		end, "Expected to find two ping messages")
 
 		local a = functional.find(networker.sent, function (k, v)
