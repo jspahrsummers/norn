@@ -24,7 +24,7 @@ jobs:
         run: luarocks install busted
       
       - name: Run tests
-        run: busted -o utfTerminal
+        run: busted --shuffle -o utfTerminal
       
       - name: Run demo
         run: lua -l gamechain.demo -e ''
