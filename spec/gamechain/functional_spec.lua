@@ -2,6 +2,30 @@ require("busted.runner")()
 
 local functional = require("gamechain.functional")
 
+describe("count_keys", function ()
+	it("should be zero for an empty table", function ()
+		assert.equals(functional.count_keys({}), 0)
+	end)
+
+	it("should match length for a sequence", function ()
+		local tbl = { "foo", "bar", "buzz" }
+		assert.equals(#tbl, 3)
+		assert.equals(functional.count_keys(tbl), #tbl)
+	end)
+
+	it("should count non-numeric keys", function ()
+		local tbl = { "foo", "bar", ["fuzz"] = "buzz", -1.5 }
+		assert.equals(#tbl, 3)
+		assert.equals(functional.count_keys(tbl), 4)
+	end)
+
+	it("should count keys in table without any sequence", function ()
+		local tbl = { ["foo"] = "bar", ["fuzz"] = "buzz" }
+		assert.equals(#tbl, 0)
+		assert.equals(functional.count_keys(tbl), 2)
+	end)
+end)
+
 describe("find", function ()
 	local tbl = { 3, "foo", ["fuzz"] = "buzz", -1.5, "bar" }
 
@@ -34,7 +58,4 @@ describe("find", function ()
 end)
 
 pending("find_all", function ()
-end)
-
-pending("count_keys", function ()
 end)
