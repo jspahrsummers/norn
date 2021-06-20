@@ -57,5 +57,26 @@ describe("find", function ()
 	end)
 end)
 
-pending("find_all", function ()
+describe("find_all", function ()
+	local tbl = { 3, "foo", ["fuzz"] = "buzz", -1.5, "bar" }
+
+	it("should return empty table for always-false predicate", function ()
+		local result = functional.find_all(tbl, function (k, v) return false end)
+		assert.is.same(result, {})
+	end)
+
+	it("should return all elements for always-true predicate", function ()
+		local result = functional.find_all(tbl, function (k, v) return true end)
+		assert.is.same(result, tbl)
+	end)
+
+	it("should return a single matching element", function ()
+		local result = functional.find_all(tbl, function (k, v) return k == "fuzz" and v == "buzz" end)
+		assert.is.same(result, { ["fuzz"] = "buzz" })
+	end)
+
+	it("should return all of several matching elements", function ()
+		local result = functional.find_all(tbl, function (k, v) return type(v) == "number" end)
+		assert.is.same(result, { [1] = 3, [3] = -1.5 })
+	end)
 end)
