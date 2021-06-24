@@ -142,8 +142,7 @@ function Node:create_wallet()
 		io.stderr:write(string.format("Warning: creating new wallet for node to replace wallet %s", self.wallet_privkey:public_key()))
 	end
 
-	-- TODO
-	assert(false)
+	self.wallet_privkey = PrivateKey()
 end
 
 function Node:handle_message(sender, msg)

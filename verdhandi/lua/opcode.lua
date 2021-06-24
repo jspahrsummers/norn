@@ -21,12 +21,6 @@ function M.validators_changed(new_validators_and_wallets)
 	return { M.VALIDATORS_CHANGED, list }
 end
 
---- Written when a new wallet is created.
-M.WALLET_CREATED = "wallet-created"
-function M.wallet_created(wallet_pubkey)
-	return { M.WALLET_CREATED, tostring(wallet_pubkey:public_key()) }
-end
-
 --- Written when a wallet has been caught cheating, and a penalty has been applied by the validator quorum.
 -- The new balance cannot be higher than the previous balance.
 M.WALLET_PENALTY = "wallet-penalty"
