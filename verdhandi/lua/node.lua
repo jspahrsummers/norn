@@ -129,7 +129,7 @@ end
 function Node:_obtain_blockchain()
 	if not next(self.peer_set) then
 		io.stderr:write("No peers available to synchronize with, starting a new network")
-		-- TODO
+		self:_seize_power()
 		return
 	end
 
@@ -237,8 +237,16 @@ function Node:_set_blockchain(chain)
 
 	if not next(self.known_validators) then
 		io.stderr:write("Received existing blockchain, but no validators are elected")
-		-- TODO: Elect self as a validator
+		self:_seize_power()
 	end
+end
+
+function Node:_seize_power()
+	-- TODO: Create wallet if don't already have one
+
+	proposed = {
+		data = opcode.encode()
+	}
 end
 
 function Node:_handle_block_forged(sender, block)
