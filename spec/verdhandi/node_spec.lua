@@ -233,24 +233,24 @@ describe("node", function ()
 			assert.are.equal(node.chain, chain)
 		end)
 
-		it("should be parsed for producer list", function ()
-			local producers_and_wallets = {
+		it("should be parsed for validator list", function ()
+			local validators_and_wallets = {
 				["192.168.0.1"] = { key = PrivateKey(), balance = 0 },
 				["192.168.0.2"] = { key = PrivateKey(), balance = 0 },
 			}
 
-			local chain = create_blockchain(opcode.producers_changed(producers_and_wallets))
+			local chain = create_blockchain(opcode.validators_changed(validators_and_wallets))
 			local node = Node { networker = networker, chain = chain }
 
-			local expected_producers = {}
-			for address, wallet in pairs(producers_and_wallets) do
-				expected_producers[#expected_producers + 1] = {
+			local expected_validators = {}
+			for address, wallet in pairs(validators_and_wallets) do
+				expected_validators[#expected_validators + 1] = {
 					peer_address = address,
 					wallet_pubkey = wallet.key:public_key(),
 				}
 			end
 
-			assert.are.same(node.known_producers, expected_producers)
+			assert.are.same(node.known_validators, expected_validators)
 		end)
 	end)
 end)

@@ -34,20 +34,20 @@ function M.peer_list(maybe_token, peers)
 	return { M.PEER_LIST, maybe_token or "", peers }
 end
 
---- A staking request from a node that would like to become a producer.
+--- A staking request from a node that would like to become a validator.
 -- The indicated wallet will be used to determine eligibility for staking, and the node must demonstrate ownership of it by signing the token with the wallet's private key.
 M.STAKE = "stake"
 function M.stake(token, wallet_pubkey, signed_token)
 	return { M.STAKE, token, tostring(wallet_pubkey:public_key()), signed_token }
 end
 
---- One producer's vote to approve a staking request.
+--- One validator's vote to approve a staking request.
 M.STAKE_VOTE_APPROVAL = "stake-vote-approval"
 function M.stake_vote_approval(token, approver_signed_token)
 	return { M.STAKE_VOTE_APPROVAL, token, approver_signed_token }
 end
 
---- One producer's vote to evict another producer, either for inactivity or because their stake fell below the minimum requirement.
+--- One validator's vote to evict another validator, either for inactivity or because their stake fell below the minimum requirement.
 M.EVICTION_VOTE = "eviction-vote"
 function M.eviction_vote(token, wallet_pubkey, signed_token)
 	return { M.EVICTION_VOTE, token, tostring(wallet_pubkey:public_key()), signed_token }
@@ -59,15 +59,15 @@ function M.create_wallet(token, wallet_pubkey, signed_token)
 	return { M.CREATE_WALLET, token, tostring(wallet_pubkey:public_key()), signed_token }
 end
 
---- Sent when a node discovers evidence that one or more producers signed two mutually exclusive blocks before either had expired.
--- The remaining producers should confirm a block to apply a penalty to the cheating wallet(s).
+--- Sent when a node discovers evidence that one or more validators signed two mutually exclusive blocks before either had expired.
+-- The remaining validators should confirm a block to apply a penalty to the cheating wallet(s).
 M.CAUGHT_CHEATING = "caught-cheating"
 function M.caught_cheating(evidence_block_a, evidence_block_b)
 	return { M.CAUGHT_CHEATING, evidence_block_a, evidence_block_b }
 end
 
 --- Requests the latest balance for the named wallet.
--- This information is discoverable through the blockchain, but this allows nodes who do not have a full copy of the chain to quickly query it from those who do (i.e., producers).
+-- This information is discoverable through the blockchain, but this allows nodes who do not have a full copy of the chain to quickly query it from those who do (i.e., validators).
 M.REQUEST_WALLET_BALANCE = "request-wallet-balance"
 function M.request_wallet_balance(token, wallet_pubkey)
 	return { M.REQUEST_WALLET_BALANCE, token, tostring(wallet_pubkey:public_key()) }
@@ -99,7 +99,7 @@ function M.blockchain(token, chain)
 	return { M.BLOCKCHAIN, token, chain.blocks }
 end
 
---- Sent to all nodes when producers have forged a new block for the chain.
+--- Sent to all nodes when validators have forged a new block for the chain.
 M.BLOCK_FORGED = "block-forged"
 function M.block_forged(block)
 	return { M.BLOCK_FORGED, block }

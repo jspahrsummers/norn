@@ -18,8 +18,8 @@ function Block:init()
 	assert(self.timestamp, "Block is missing a timestamp")
 	assert(self.data, "Block must have data")
 	assert(self.hash == Block.compute_hash(self), "Block initialized hash does not match computed hash")
-	assert(self.signatures, "Block must have signatures from forging producers")
-	assert(#self.signatures > 0, "Block must have signatures from forging producers")
+	assert(self.signatures, "Block must have signatures from forging validators")
+	assert(#self.signatures > 0, "Block must have signatures from forging validators")
 end
 
 function Block.forge(proposed)

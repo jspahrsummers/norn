@@ -31,10 +31,10 @@ local function peer_set_to_list(peer_set)
 	return list
 end
 
-local function producer_keys(producers)
+local function validator_keys(validators)
 	local keys = {}
-	for _, producer in pairs(producers) do
-		keys[#keys + 1] = producer.wallet_pubkey
+	for _, validator in pairs(validators) do
+		keys[#keys + 1] = validator.wallet_pubkey
 	end
 
 	return keys
@@ -58,10 +58,10 @@ function Node:init()
 		self.peer_set = {}
 	end
 
-	self.is_producer = false
-	self.known_producers = {}
+	self.is_validator = false
+	self.known_validators = {}
 	if self.chain then
-		-- Scrape the blockchain for producer list, etc.
+		-- Scrape the blockchain for validator list, etc.
 		self:_set_blockchain(self.chain)
 	else
 		self.chain = Blockchain {}
@@ -163,7 +163,7 @@ function Node:handle_message(sender, msg)
 	if handler then
 		handler(self, sender, table.unpack(msg, 2))
 	else
-		io.stderr:write("Non-producer node cannot handle message ", name)
+		io.stderr:write("Non-validator node cannot handle message ", name)
 	end
 end
 
@@ -202,8 +202,8 @@ function Node:_handle_request_blockchain(sender, token)
 end
 
 function Node:_handle_blockchain(sender, token, blocks)
-	if self.is_producer then
-		io.stderr:write(string.format("As a producer, ignoring replacement blockchain from peer node %s:\n%s", sender, chain))
+	if self.is_validator then
+		io.stderr:write(string.format("As a validator, ignoring replacement blockchain from peer node %s:\n%s", sender, chain))
 		return
 	end
 	
@@ -218,16 +218,16 @@ end
 
 function Node:_set_blockchain(chain)
 	self.chain = chain
-	self.known_producers = {}
+	self.known_validators = {}
 
 	for block in self.chain:traverse_latest() do
 		local op = opcode.decode(block.data)
 		if not op then
 			io.stderr:write(string.format("Unable to parse block %s", tohex(block.hash)))
-		elseif op[1] == opcode.PRODUCERS_CHANGED then
+		elseif op[1] == opcode.VALIDATORS_CHANGED then
 			for _, row in pairs(op[2]) do
 				local address, wallet_pubkey, wallet_balance = table.unpack(row)
-				self.known_producers[#self.known_producers + 1] = {
+				self.known_validators[#self.known_validators + 1] = {
 					peer_address = address,
 					wallet_pubkey = PublicKey(wallet_pubkey)
 				}
@@ -235,14 +235,14 @@ function Node:_set_blockchain(chain)
 		end
 	end
 
-	if not next(self.known_producers) then
-		io.stderr:write("Received existing blockchain, but no producers are elected")
-		-- TODO: Elect self as a producer
+	if not next(self.known_validators) then
+		io.stderr:write("Received existing blockchain, but no validators are elected")
+		-- TODO: Elect self as a validator
 	end
 end
 
 function Node:_handle_block_forged(sender, block)
-	if not block:verify_signers(producer_keys(self.known_producers)) then
+	if not block:verify_signers(validator_keys(self.known_validators)) then
 		io.stderr.write(string.format("Missing consensus for block sent by peer node %s:\n%s", sender, block))
 		return
 	end
@@ -272,10 +272,10 @@ function Node:_broadcast(msg)
 	end
 end
 
-function Node:_multicast_to_producers(msg)
+function Node:_multicast_to_validators(msg)
 	local bytes = message.encode(msg)
-	for _, producer in pairs(self.known_producers) do
-		self.networker:send(producer.peer_address, bytes)
+	for _, validator in pairs(self.known_validators) do
+		self.networker:send(validator.peer_address, bytes)
 	end
 end
 
