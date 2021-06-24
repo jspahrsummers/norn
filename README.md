@@ -1,6 +1,6 @@
 # verdhandi [![Lua 5.2.4](https://img.shields.io/badge/lua-5.2.4-blue)](http://www.lua.org/manual/5.2/)
 
-_verdhandi_ provides [blockchain](https://en.wikipedia.org/wiki/Blockchain) infrastructure for peer-to-peer multiplayer games, allowing players to coordinate game state without any central authority.
+_verdhandi_ (named after the Norn [Verðandi](https://en.wikipedia.org/wiki/Ver%C3%B0andi) in Norse mythology) provides [blockchain](https://en.wikipedia.org/wiki/Blockchain) infrastructure for peer-to-peer multiplayer games, allowing players to coordinate game state without any central authority.
 
 This library implements _only the infrastructure_ and is designed to be embedded into a game—it is neither a client nor a server for an existing blockchain network! Customized, game-specific logic is meant to be added on top, making it actually come alive.
 
