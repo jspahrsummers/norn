@@ -17,8 +17,8 @@ end
 
 --- Response to a previous ping.
 M.PONG = "pong"
-function M.pong(token)
-	return { M.PONG, token }
+function M.pong(token, ping_sender_address)
+	return { M.PONG, token, ping_sender_address }
 end
 
 --- Request the list of peers held by a given node.

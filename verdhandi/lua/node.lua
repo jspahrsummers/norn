@@ -175,12 +175,20 @@ function Node:handle_app_defined(sender, ...)
 end
 
 function Node:_handle_ping(sender, token)
-	local msg = message.pong(token)
+	local msg = message.pong(token, sender)
 	self.networker:send(sender, message.encode(msg))
 end
 
-function Node:_handle_pong(sender, token)
-	-- This sender was already marked as active in the receive loop.
+function Node:_handle_pong(sender, token, ping_sender_address)
+	if not self.address then
+		-- TODO: Don't trust peers to report our address, use an oracle instead
+		self.address = ping_sender_address
+		return
+	end
+
+	if self.address ~= ping_sender_address then
+		io.stderr:write(string.format("Peer %s reported our address as %s, but we know it as %s", sender, ping_sender_address, self.address))
+	end
 end
 
 function Node:_handle_request_peer_list(sender, token)
