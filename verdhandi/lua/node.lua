@@ -138,11 +138,14 @@ function Node:_obtain_blockchain()
 end
 
 function Node:create_wallet()
-	if self.wallet_privkey then
-		io.stderr:write(string.format("Warning: creating new wallet for node to replace wallet %s", self.wallet_privkey:public_key()))
+	if self.wallet then
+		io.stderr:write(string.format("Warning: creating new wallet for node to replace wallet %s", self.wallet.key:public_key()))
 	end
 
-	self.wallet_privkey = PrivateKey()
+	self.wallet = {
+		key = PrivateKey(),
+		balance = 0
+	}
 end
 
 function Node:handle_message(sender, msg)
@@ -241,14 +244,45 @@ function Node:_set_blockchain(chain)
 end
 
 function Node:_seize_power()
-	-- TODO: Create wallet if don't already have one
+	if not self.wallet then
+		io.stderr:write("Node does not have a wallet, cannot elect self as a validator")
+		return
+	end
 
-	proposed = {
-		data = opcode.encode()
+	if not self.address then
+		-- TODO: Have to figure out own network address before election
+		assert(false)
+	end
+
+	local wallet_pubkey = self.wallet.key:public_key()
+
+	-- TODO: Should this issue a staking request instead of just assuming it succeeded?
+	local block = Block.forge {
+		data = opcode.encode(opcode.validators_changed {
+			[self.address] = {
+				key = wallet_pubkey,
+				balance = self.wallet.balance,
+			}
+		}),
+		keys = { self.wallet.key },
+		previous_hash = self.chain:latest_block() and self.chain:latest_block().hash or nil,
 	}
+
+	if not self.chain:add_block(block) then
+		io.stderr.write(string.format("Could not forge new block for self-election:\n%s", block))
+		return
+	end
+
+	self.known_validators = {
+		{ peer_address = self.address, wallet_pubkey = wallet_pubkey }
+	}
+
+	local msg = message.block_forged(block)
+	self:_broadcast(msg)
 end
 
 function Node:_handle_block_forged(sender, block)
+	-- TODO: Handle the case where there are no validators
 	if not block:verify_signers(validator_keys(self.known_validators)) then
 		io.stderr.write(string.format("Missing consensus for block sent by peer node %s:\n%s", sender, block))
 		return
