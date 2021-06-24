@@ -1,14 +1,14 @@
 require("busted.runner")()
 
-local Block = require("gamechain.block")
-local Blockchain = require("gamechain.blockchain")
-local Clock = require("gamechain.clock")
+local Block = require("verdhandi.block")
+local Blockchain = require("verdhandi.blockchain")
+local Clock = require("verdhandi.clock")
 local date = require("date")
-local functional = require("gamechain.functional")
-local message = require("gamechain.message")
-local Node = require("gamechain.node")
-local opcode = require("gamechain.opcode")
-local PrivateKey = require("gamechain.privatekey")
+local functional = require("verdhandi.functional")
+local message = require("verdhandi.message")
+local Node = require("verdhandi.node")
+local opcode = require("verdhandi.opcode")
+local PrivateKey = require("verdhandi.privatekey")
 
 local TestNetworker = {}
 TestNetworker.__index = TestNetworker

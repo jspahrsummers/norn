@@ -1,6 +1,6 @@
 require("busted.runner")()
 
-local tohex = require("gamechain.tohex")
+local tohex = require("verdhandi.tohex")
 
 describe("tohex", function ()
 	it("should do nothing for empty string", function ()

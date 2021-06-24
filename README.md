@@ -1,6 +1,6 @@
-# gamechain [![Lua 5.2.4](https://img.shields.io/badge/lua-5.2.4-blue)](http://www.lua.org/manual/5.2/)
+# verdhandi [![Lua 5.2.4](https://img.shields.io/badge/lua-5.2.4-blue)](http://www.lua.org/manual/5.2/)
 
-_gamechain_ provides [blockchain](https://en.wikipedia.org/wiki/Blockchain) infrastructure for peer-to-peer multiplayer games, allowing players to coordinate game state without any central authority.
+_verdhandi_ provides [blockchain](https://en.wikipedia.org/wiki/Blockchain) infrastructure for peer-to-peer multiplayer games, allowing players to coordinate game state without any central authority.
 
 This library implements _only the infrastructure_ and is designed to be embedded into a game—it is neither a client nor a server for an existing blockchain network! Customized, game-specific logic is meant to be added on top, making it actually come alive.
 
@@ -18,9 +18,9 @@ The library's [design philosophy](#why-a-new-blockchain-implementation) emphasiz
 
 [Lua](http://www.lua.org/) is one of the smallest, easiest-to-embed scripting languages—and very popular in gaming for exactly these reasons.
 
-Although we miss out on the safety of static type-checking, and despite a [much smaller package ecosystem](https://luarocks.org/) than some other languages, Lua has bindings for basically every language & platform used to build games. The goal is for _gamechain_ to be trivially embeddable, and to give the game on top maximum latitude to use it as it sees fit.
+Although we miss out on the safety of static type-checking, and despite a [much smaller package ecosystem](https://luarocks.org/) than some other languages, Lua has bindings for basically every language & platform used to build games. The goal is for _verdhandi_ to be trivially embeddable, and to give the game on top maximum latitude to use it as it sees fit.
 
-_gamechain_ targets [Lua 5.2](http://www.lua.org/manual/5.2/), for compatibility with the [MoonSharp](https://www.moonsharp.org/) interpreter (which, if you're building a game in [Unity](https://unity.com/), you may find useful!).
+_verdhandi_ targets [Lua 5.2](http://www.lua.org/manual/5.2/), for compatibility with the [MoonSharp](https://www.moonsharp.org/) interpreter (which, if you're building a game in [Unity](https://unity.com/), you may find useful!).
 
 ## Why a new blockchain implementation?
 
@@ -33,18 +33,18 @@ Security- and cryptocurrency-focused blockchains _have_ been occasionally combin
 * Games that use cryptocurrency for microtransactions
 * Turn-based games that aren't latency-sensitive
 
-These aren't good benchmarks for real-time multiplayer gaming. _gamechain_ is intended to implement peer-to-peer synchronization for real-time games that are mostly played client-side (e.g., on desktops, consoles, or phones).
+These aren't good benchmarks for real-time multiplayer gaming. _verdhandi_ is intended to implement peer-to-peer synchronization for real-time games that are mostly played client-side (e.g., on desktops, consoles, or phones).
 
 Plus, this project is just a good learning exercise. :grin:
 
 ### Other alternatives
 
-Flexible, low-latency blockchain implementations do exist, but I haven't found any that quite fit the niche that _gamechain_ is attempting to fill:
+Flexible, low-latency blockchain implementations do exist, but I haven't found any that quite fit the niche that _verdhandi_ is attempting to fill:
 
 * [eosio](https://eos.io/) seems highly customizable and reasonably low-latency, but is not really built with embedding in mind. It appears to require users to run a daemon, and implements its own smart contract language (great for flexibility, but abstraction overkill for games). Games can't require users to be SysOps.
 * [Hypercore Protocol](https://hypercore-protocol.org/) looks simple and very lightweight, and is available via Node.js libraries—while not _quite_ as suited to games as Lua is, JavaScript is still highly embeddable and could work. Unfortunately, it doesn't include any consensus mechanisms, which distributed gaming requires (for fairness and to mitigate cheating). Hypercore may nonetheless still be useful as a network topology or storage abstraction.
 
-Know of any others? I'd love to hear about them! Please [open an issue](https://github.com/jspahrsummers/gamechain/issues/new), including a link, a little summary, and your thoughts on their applicability to multiplayer gaming.
+Know of any others? I'd love to hear about them! Please [open an issue](https://github.com/jspahrsummers/verdhandi/issues/new), including a link, a little summary, and your thoughts on their applicability to multiplayer gaming.
 
 ## Getting started
 
@@ -60,10 +60,10 @@ The latest version of LuaRocks ([v3.7.0](https://github.com/luarocks/luarocks/re
 
 ### Build and install the library
 
-To build and install _gamechain_ for your user, run the following from the repository's folder:
+To build and install _verdhandi_ for your user, run the following from the repository's folder:
 
 ```sh
-luarocks make --local gamechain-[^d]*.rockspec
+luarocks make --local verdhandi-[^d]*.rockspec
 ```
 
 If you want to install the library globally (note: you probably don't), just drop the `--local` flag.
@@ -73,13 +73,13 @@ If you want to install the library globally (note: you probably don't), just dro
 The demo can be built and installed the same way as the library:
 
 ```sh
-luarocks make --local gamechain-demo-*.rockspec
+luarocks make --local verdhandi-demo-*.rockspec
 ```
 
 … then run like so:
 
 ```sh
-lua -l gamechain.demo
+lua -l verdhandi.demo
 ```
 
 ### Run the tests
@@ -98,4 +98,4 @@ busted
 
 ## License
 
-_gamechain_ is released under the [MIT license](LICENSE).
+_verdhandi_ is released under the [MIT license](LICENSE).

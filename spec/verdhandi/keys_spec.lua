@@ -1,7 +1,7 @@
 require("busted.runner")()
 
-local PublicKey = require("gamechain.publickey")
-local PrivateKey = require("gamechain.privatekey")
+local PublicKey = require("verdhandi.publickey")
+local PrivateKey = require("verdhandi.privatekey")
 
 describe("PrivateKey", function ()
 	it("should equal itself", function ()

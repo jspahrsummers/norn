@@ -1,6 +1,6 @@
 local M = {}
 
-local Clock = require("gamechain.clock")
+local Clock = require("verdhandi.clock")
 
 function M.once(seconds, f, clock)
 	if not clock then

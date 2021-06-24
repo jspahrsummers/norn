@@ -1,11 +1,11 @@
-local Blockchain = require("gamechain.blockchain")
-local Clock = require("gamechain.clock")
-local functional = require("gamechain.functional")
-local message = require("gamechain.message")
-local opcode = require("gamechain.opcode")
-local PublicKey = require("gamechain.publickey")
-local tohex = require("gamechain.tohex")
-local timer = require("gamechain.timer")
+local Blockchain = require("verdhandi.blockchain")
+local Clock = require("verdhandi.clock")
+local functional = require("verdhandi.functional")
+local message = require("verdhandi.message")
+local opcode = require("verdhandi.opcode")
+local PublicKey = require("verdhandi.publickey")
+local tohex = require("verdhandi.tohex")
+local timer = require("verdhandi.timer")
 
 local Node = {}
 Node.__index = Node

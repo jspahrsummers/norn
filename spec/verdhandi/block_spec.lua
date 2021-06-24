@@ -1,10 +1,10 @@
 require("busted.runner")()
 
-local Block = require("gamechain.block")
+local Block = require("verdhandi.block")
 local date = require("date")
-local hash = require("gamechain.hash")
-local PrivateKey = require("gamechain.privatekey")
-local tohex = require("gamechain.tohex")
+local hash = require("verdhandi.hash")
+local PrivateKey = require("verdhandi.privatekey")
+local tohex = require("verdhandi.tohex")
 
 describe("block", function ()
 	local keys

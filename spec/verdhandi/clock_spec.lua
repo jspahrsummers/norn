@@ -1,6 +1,6 @@
 require("busted.runner")()
 
-local Clock = require("gamechain.clock")
+local Clock = require("verdhandi.clock")
 
 describe("OS clock", function ()
 	local c

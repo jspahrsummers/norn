@@ -1,6 +1,6 @@
 require("busted.runner")()
 
-local consensus = require("gamechain.consensus")
+local consensus = require("verdhandi.consensus")
 
 describe("consensus", function ()
 	it("should fail without any agreement", function ()

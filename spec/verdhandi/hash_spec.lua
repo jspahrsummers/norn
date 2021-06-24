@@ -1,6 +1,6 @@
 require("busted.runner")()
 
-local hash = require("gamechain.hash")
+local hash = require("verdhandi.hash")
 
 describe("hash", function ()
 	it("should produce a 32-byte hash", function ()

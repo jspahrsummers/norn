@@ -1,7 +1,7 @@
 require("busted.runner")()
 
-local message = require("gamechain.message")
-local opcode = require("gamechain.opcode")
+local message = require("verdhandi.message")
+local opcode = require("verdhandi.opcode")
 
 local function dummy_argument()
 	local dummy_callable = {}

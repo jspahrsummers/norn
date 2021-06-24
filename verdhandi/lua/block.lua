@@ -1,10 +1,10 @@
 local Block = {}
 Block.__index = Block
 
-local consensus = require("gamechain.consensus")
+local consensus = require("verdhandi.consensus")
 local date = require("date")
-local hash = require("gamechain.hash")
-local tohex = require("gamechain.tohex")
+local hash = require("verdhandi.hash")
+local tohex = require("verdhandi.tohex")
 
 setmetatable(Block, {
 	__call = function (cls, obj, ...)
