@@ -6,6 +6,7 @@ local opcode = require("norn.opcode")
 local PublicKey = require("norn.publickey")
 local tohex = require("norn.tohex")
 local timer = require("norn.timer")
+local Wallet = require("norn.wallet")
 
 local Node = {}
 Node.__index = Node
@@ -33,8 +34,8 @@ end
 
 local function validator_keys(validators)
 	local keys = {}
-	for _, validator in pairs(validators) do
-		keys[#keys + 1] = validator.wallet_pubkey
+	for address, wallet in pairs(validators) do
+		keys[#keys + 1] = wallet.key
 	end
 
 	return keys
@@ -232,12 +233,8 @@ function Node:_set_blockchain(chain)
 		if not op then
 			io.stderr:write(string.format("Unable to parse block %s", tohex(block.hash)))
 		elseif op[1] == opcode.VALIDATORS_CHANGED then
-			for _, row in pairs(op[2]) do
-				local address, wallet_pubkey, wallet_balance = table.unpack(row)
-				self.known_validators[#self.known_validators + 1] = {
-					peer_address = address,
-					wallet_pubkey = PublicKey(wallet_pubkey)
-				}
+			for address, wallet in pairs(op[2]) do
+				self.known_validators[address] = Wallet.from_network_representation(wallet)
 			end
 		end
 	end
@@ -254,15 +251,10 @@ function Node:_seize_power()
 		return
 	end
 
-	local wallet_pubkey = self.wallet.key:public_key()
-
 	-- TODO: Should this issue a staking request instead of just assuming it succeeded?
 	local block = Block.forge {
 		data = opcode.encode(opcode.validators_changed {
-			[self.address] = {
-				key = wallet_pubkey,
-				balance = self.wallet.balance,
-			}
+			[self.address] = self.wallet,
 		}),
 		keys = { self.wallet.key },
 		previous_hash = self.chain:latest_block() and self.chain:latest_block().hash or nil,
@@ -274,7 +266,7 @@ function Node:_seize_power()
 	end
 
 	self.known_validators = {
-		{ peer_address = self.address, wallet_pubkey = wallet_pubkey }
+		[self.address] = self.wallet,
 	}
 
 	local msg = message.block_forged(block)
@@ -320,10 +312,10 @@ end
 
 function Node:_multicast_to_validators(msg)
 	local bytes = message.encode(msg)
-	for _, validator in pairs(self.known_validators) do
+	for address, wallet in pairs(self.known_validators) do
 		-- It's legal for this node to appear in its own validator list, but obviously, we don't need to notify ourselves.
-		if validator.peer_address ~= self.address then
-			self.networker:send(validator.peer_address, bytes)
+		if address ~= self.address then
+			self.networker:send(address, bytes)
 		end
 	end
 end

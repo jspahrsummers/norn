@@ -2,6 +2,7 @@ local Wallet = {}
 Wallet.__index = Wallet
 
 local PrivateKey = require("norn.privatekey")
+local PublicKey = require("norn.publickey")
 
 setmetatable(Wallet, {
 	__call = function (cls, obj, ...)
@@ -23,8 +24,19 @@ function Wallet.create()
 	}
 end
 
+function Wallet.from_network_representation(tbl)
+	return Wallet { key = PublicKey(tbl.key), balance = tbl.balance }
+end
+
 function Wallet:public_key()
 	return self.key:public_key()
+end
+
+function Wallet:network_representation()
+	return {
+		key = tostring(self:public_key()),
+		balance = self.balance,
+	}
 end
 
 function Wallet:__lt(other)

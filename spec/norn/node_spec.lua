@@ -9,6 +9,7 @@ local message = require("norn.message")
 local Node = require("norn.node")
 local opcode = require("norn.opcode")
 local PrivateKey = require("norn.privatekey")
+local Wallet = require("norn.wallet")
 
 local TestNetworker = {}
 TestNetworker.__index = TestNetworker
@@ -237,22 +238,17 @@ describe("node", function ()
 
 		it("should be parsed for validator list", function ()
 			local validators_and_wallets = {
-				["192.168.0.1"] = { key = PrivateKey(), balance = 0 },
-				["192.168.0.2"] = { key = PrivateKey(), balance = 0 },
+				["192.168.0.1"] = Wallet.create(),
+				["192.168.0.2"] = Wallet.create(),
 			}
 
 			local chain = create_blockchain(opcode.validators_changed(validators_and_wallets))
 			local node = Node { networker = networker, address = address, chain = chain }
 
-			local expected_validators = {}
 			for address, wallet in pairs(validators_and_wallets) do
-				expected_validators[#expected_validators + 1] = {
-					peer_address = address,
-					wallet_pubkey = wallet.key:public_key(),
-				}
+				assert.are.equal(node.known_validators[address]:public_key(), wallet:public_key())
+				assert.are.equal(node.known_validators[address].balance, wallet.balance)
 			end
-
-			assert.are.same(node.known_validators, expected_validators)
 		end)
 	end)
 end)
