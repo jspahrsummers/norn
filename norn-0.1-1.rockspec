@@ -32,5 +32,6 @@ build = {
       ["norn.publickey"] = "norn/lua/publickey.lua",
       ["norn.timer"] = "norn/lua/timer.lua",
       ["norn.tohex"] = "norn/lua/tohex.lua",
+      ["norn.wallet"] = "norn/lua/wallet.lua",
    }
 }
