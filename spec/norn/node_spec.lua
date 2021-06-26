@@ -38,13 +38,14 @@ end
 
 describe("node", function ()
 	local networker
+	local address = "test_node_address"
 
 	before_each(function ()
 		networker = TestNetworker()
 	end)
 
 	it("should respond to ping with pong", function ()
-		local node = Node { networker = networker }
+		local node = Node { networker = networker, address = address }
 		local token = "foobar"
 		local sender = "test_sender"
 		node:handle_message(sender, message.ping(token))
@@ -56,7 +57,7 @@ describe("node", function ()
 
 	it("should fulfill peer list request", function ()
 		local peers = { "a", "b", "c" }
-		local node = Node { networker = networker, peer_list = peers }
+		local node = Node { networker = networker, address = address, peer_list = peers }
 		local token = "foobar"
 		local sender = "test_sender"
 		node:handle_message(sender, message.request_peer_list(token))
@@ -69,6 +70,7 @@ describe("node", function ()
 	it("should deduplicate peer list", function ()
 		local node = Node {
 			networker = networker,
+			address = address,
 			peer_list = { "a", "a", "b", "c", "c", "c" }
 		}
 
@@ -83,7 +85,7 @@ describe("node", function ()
 
 	it("should merge received peer list", function ()
 		local original_peers = { "a", "d", "e" }
-		local node = Node { networker = networker, peer_list = original_peers }
+		local node = Node { networker = networker, address = address, peer_list = original_peers }
 
 		local added_peers = { "f", "b", "c", }
 		local sender = "test_sender"
@@ -105,7 +107,7 @@ describe("node", function ()
 	it("should ping peer list after interval", function ()
 		local c = Clock.virtual()
 		local peers = { "a", "b" }
-		local node = Node { networker = networker, peer_list = peers, clock = c }
+		local node = Node { networker = networker, address = address, peer_list = peers, clock = c }
 
 		local coro = coroutine.create(function ()
 			node:run()
@@ -138,7 +140,7 @@ describe("node", function ()
 	it("should drop peers that fail to communicate in time", function ()
 		local c = Clock.virtual()
 		local peers = { "a", "b" }
-		local node = Node { networker = networker, peer_list = peers, clock = c }
+		local node = Node { networker = networker, address = address, peer_list = peers, clock = c }
 
 		local coro = coroutine.create(function ()
 			node:run()
@@ -175,7 +177,7 @@ describe("node", function ()
 			received_app_defined = { ... }
 		end
 
-		local node = Node { networker = networker, handle_app_defined = app_defined_handler }
+		local node = Node { networker = networker, address = address, handle_app_defined = app_defined_handler }
 		local test_data = { "foobar", 5 }
 		node:handle_message(sender, message.app_defined(table.unpack(test_data)))
 		assert.are.same(received_app_defined, test_data)
@@ -201,19 +203,19 @@ describe("node", function ()
 		end
 
 		it("should start empty", function ()
-			local node = Node { networker = networker }
+			local node = Node { networker = networker, address = address }
 			assert.is.equal(#node.chain, 0)
 		end)
 
 		it("should be initializable", function ()
 			local chain = create_blockchain(opcode.app_defined("foobar"), opcode.app_defined("fuzzbuzz"))
-			local node = Node { networker = networker, chain = chain }
+			local node = Node { networker = networker, address = address, chain = chain }
 			assert.is.equal(node.chain, chain)
 		end)
 		
 		it("should be sent to any peer who requests it", function ()
 			local chain = create_blockchain(opcode.app_defined("foobar"), opcode.app_defined("fuzzbuzz"))
-			local node = Node { networker = networker, chain = chain }
+			local node = Node { networker = networker, address = address, chain = chain }
 			local token = "foobar"
 			local sender = "test_sender"
 			node:handle_message(sender, message.request_blockchain(token))
@@ -224,7 +226,7 @@ describe("node", function ()
 		end)
 		
 		it("should be loaded from network", function ()
-			local node = Node { networker = networker }
+			local node = Node { networker = networker, address = address }
 			local chain = create_blockchain(opcode.app_defined("foobar"), opcode.app_defined("fuzzbuzz"))
 			assert.are_not.equal(node.chain, chain)
 
@@ -240,7 +242,7 @@ describe("node", function ()
 			}
 
 			local chain = create_blockchain(opcode.validators_changed(validators_and_wallets))
-			local node = Node { networker = networker, chain = chain }
+			local node = Node { networker = networker, address = address, chain = chain }
 
 			local expected_validators = {}
 			for address, wallet in pairs(validators_and_wallets) do

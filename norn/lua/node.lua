@@ -42,6 +42,7 @@ end
 
 function Node:init()
 	assert(self.networker, "Node must be created with a networker to use")
+	assert(self.address, "Node must be created with an address")
 
 	if not self.clock then
 		self.clock = Clock.os()
@@ -247,11 +248,6 @@ function Node:_seize_power()
 	if not self.wallet then
 		io.stderr:write("Node does not have a wallet, cannot elect self as a validator")
 		return
-	end
-
-	if not self.address then
-		-- TODO: Have to figure out own network address before election
-		assert(false)
 	end
 
 	local wallet_pubkey = self.wallet.key:public_key()
