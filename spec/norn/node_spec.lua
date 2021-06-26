@@ -51,7 +51,7 @@ describe("node", function ()
 
 		local sent = networker.sent[1]
 		assert.are.equal(sent.dest, sender)
-		assert.are.same(message.decode(sent.bytes), message.pong(token, sender))
+		assert.are.same(message.decode(sent.bytes), message.pong(token))
 	end)
 
 	it("should fulfill peer list request", function ()
