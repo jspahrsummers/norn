@@ -53,12 +53,6 @@ function M.eviction_vote(token, wallet_pubkey, signed_token)
 	return { M.EVICTION_VOTE, token, tostring(wallet_pubkey:public_key()), signed_token }
 end
 
---- A request to create a new wallet. Nothing happens if the wallet already exists.
-M.CREATE_WALLET = "create-wallet"
-function M.create_wallet(token, wallet_pubkey, signed_token)
-	return { M.CREATE_WALLET, token, tostring(wallet_pubkey:public_key()), signed_token }
-end
-
 --- Sent when a node discovers evidence that one or more validators signed two mutually exclusive blocks before either had expired.
 -- The remaining validators should confirm a block to apply a penalty to the cheating wallet(s).
 M.CAUGHT_CHEATING = "caught-cheating"
