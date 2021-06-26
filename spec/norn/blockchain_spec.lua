@@ -1,10 +1,10 @@
 require("busted.runner")()
 
-local Block = require("verdhandi.block")
-local Blockchain = require("verdhandi.blockchain")
+local Block = require("norn.block")
+local Blockchain = require("norn.blockchain")
 local date = require("date")
-local hash = require("verdhandi.hash")
-local PrivateKey = require("verdhandi.privatekey")
+local hash = require("norn.hash")
+local PrivateKey = require("norn.privatekey")
 
 describe("blockchain", function ()
 	local privkey

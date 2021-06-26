@@ -1,7 +1,7 @@
 require("busted.runner")()
 
-local PublicKey = require("verdhandi.publickey")
-local PrivateKey = require("verdhandi.privatekey")
+local PublicKey = require("norn.publickey")
+local PrivateKey = require("norn.privatekey")
 
 describe("PrivateKey", function ()
 	it("should equal itself", function ()

@@ -1,9 +1,9 @@
-Block = require("verdhandi.block")
-Blockchain = require("verdhandi.blockchain")
-hash = require("verdhandi.hash")
-PrivateKey = require("verdhandi.privatekey")
-PublicKey = require("verdhandi.publickey")
-tohex = require("verdhandi.tohex")
+Block = require("norn.block")
+Blockchain = require("norn.blockchain")
+hash = require("norn.hash")
+PrivateKey = require("norn.privatekey")
+PublicKey = require("norn.publickey")
+tohex = require("norn.tohex")
 
 print("hash", tohex(hash("foobar")))
 

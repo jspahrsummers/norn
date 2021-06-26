@@ -14,11 +14,11 @@ jobs:
 
       - uses: leafo/gh-actions-luarocks@v4
 
-      - name: Make verdhandi
-        run: luarocks make --local verdhandi-0.*.rockspec
+      - name: Make norn
+        run: luarocks make --local norn-0.*.rockspec
 
-      - name: Make verdhandi-demo
-        run: luarocks make --local verdhandi-demo-*.rockspec
+      - name: Make norn-demo
+        run: luarocks make --local norn-demo-*.rockspec
       
       - name: Install test runner
         run: luarocks install busted
@@ -27,4 +27,4 @@ jobs:
         run: busted --shuffle -o utfTerminal
       
       - name: Run demo
-        run: lua -l verdhandi.demo -e ''
+        run: lua -l norn.demo -e ''

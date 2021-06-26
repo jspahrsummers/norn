@@ -1,7 +1,7 @@
 require("busted.runner")()
 
-local Clock = require("verdhandi.clock")
-local timer = require("verdhandi.timer")
+local Clock = require("norn.clock")
+local timer = require("norn.timer")
 
 describe("timer", function ()
 	local fired

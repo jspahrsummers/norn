@@ -1,6 +1,6 @@
 require("busted.runner")()
 
-local functional = require("verdhandi.functional")
+local functional = require("norn.functional")
 
 describe("count_keys", function ()
 	it("should be zero for an empty table", function ()

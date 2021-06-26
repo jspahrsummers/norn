@@ -1,14 +1,14 @@
 require("busted.runner")()
 
-local Block = require("verdhandi.block")
-local Blockchain = require("verdhandi.blockchain")
-local Clock = require("verdhandi.clock")
+local Block = require("norn.block")
+local Blockchain = require("norn.blockchain")
+local Clock = require("norn.clock")
 local date = require("date")
-local functional = require("verdhandi.functional")
-local message = require("verdhandi.message")
-local Node = require("verdhandi.node")
-local opcode = require("verdhandi.opcode")
-local PrivateKey = require("verdhandi.privatekey")
+local functional = require("norn.functional")
+local message = require("norn.message")
+local Node = require("norn.node")
+local opcode = require("norn.opcode")
+local PrivateKey = require("norn.privatekey")
 
 local TestNetworker = {}
 TestNetworker.__index = TestNetworker

@@ -1,6 +1,6 @@
 local digest = require("openssl.digest")
 local pkey = require("openssl.pkey")
-local PublicKey = require("verdhandi.publickey")
+local PublicKey = require("norn.publickey")
 
 local PrivateKey = {}
 PrivateKey.__index = PrivateKey

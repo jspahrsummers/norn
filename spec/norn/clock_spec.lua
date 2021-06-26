@@ -1,6 +1,6 @@
 require("busted.runner")()
 
-local Clock = require("verdhandi.clock")
+local Clock = require("norn.clock")
 
 describe("OS clock", function ()
 	local c

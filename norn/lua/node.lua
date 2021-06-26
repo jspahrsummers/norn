@@ -1,11 +1,11 @@
-local Blockchain = require("verdhandi.blockchain")
-local Clock = require("verdhandi.clock")
-local functional = require("verdhandi.functional")
-local message = require("verdhandi.message")
-local opcode = require("verdhandi.opcode")
-local PublicKey = require("verdhandi.publickey")
-local tohex = require("verdhandi.tohex")
-local timer = require("verdhandi.timer")
+local Blockchain = require("norn.blockchain")
+local Clock = require("norn.clock")
+local functional = require("norn.functional")
+local message = require("norn.message")
+local opcode = require("norn.opcode")
+local PublicKey = require("norn.publickey")
+local tohex = require("norn.tohex")
+local timer = require("norn.timer")
 
 local Node = {}
 Node.__index = Node

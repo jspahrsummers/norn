@@ -1,6 +1,6 @@
 local M = {}
 
-local Clock = require("verdhandi.clock")
+local Clock = require("norn.clock")
 
 function M.once(seconds, f, clock)
 	if not clock then

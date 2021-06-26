@@ -1,4 +1,4 @@
-local Block = require("verdhandi.block")
+local Block = require("norn.block")
 
 local Blockchain = {}
 Blockchain.__index = function (self, key)
