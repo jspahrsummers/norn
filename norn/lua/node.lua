@@ -1,3 +1,4 @@
+local Block = require("norn.block")
 local Blockchain = require("norn.blockchain")
 local Clock = require("norn.clock")
 local functional = require("norn.functional")
@@ -44,6 +45,7 @@ end
 function Node:init()
 	assert(self.networker, "Node must be created with a networker to use")
 	assert(self.address, "Node must be created with an address")
+	assert(self.wallet, "Node must be created with a wallet")
 
 	if not self.clock then
 		self.clock = Clock.os()
@@ -143,17 +145,6 @@ function Node:_obtain_blockchain()
 	self:_broadcast(message.request_blockchain(nil))
 end
 
-function Node:create_wallet()
-	if self.wallet then
-		io.stderr:write(string.format("Warning: creating new wallet for node to replace wallet %s", self.wallet.key:public_key()))
-	end
-
-	self.wallet = {
-		key = PrivateKey(),
-		balance = 0
-	}
-end
-
 function Node:handle_message(sender, msg)
 	local handlers = {
 		[message.APP_DEFINED] = self.handle_app_defined,
@@ -246,11 +237,6 @@ function Node:_set_blockchain(chain)
 end
 
 function Node:_seize_power()
-	if not self.wallet then
-		io.stderr:write("Node does not have a wallet, cannot elect self as a validator")
-		return
-	end
-
 	-- TODO: Should this issue a staking request instead of just assuming it succeeded?
 	local block = Block.forge {
 		data = opcode.encode(opcode.validators_changed {
