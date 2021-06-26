@@ -51,6 +51,7 @@ function Node:init()
 	if self.peer_list then
 		self.peer_set = {}
 		for _, peer in pairs(self.peer_list) do
+			assert(self:_is_valid_peer(peer), "Invalid peer provided at initialization time")
 			self.peer_set[peer] = 0
 		end
 
@@ -101,6 +102,7 @@ function Node:_recv_loop()
 	return coroutine.create(function ()
 		while true do
 			local sender, bytes = self.networker:recv()
+			assert(self:_is_valid_peer(sender), "Received message from invalid peer")
 			self:_maybe_new_peer(sender)
 			self.peer_set[sender] = self.clock:now()
 
@@ -115,6 +117,8 @@ end
 function Node:_ping_peers()
 	local current_time = self.clock:now()
 	for peer, last_seen in pairs(self.peer_set) do
+		assert(self:_is_valid_peer(peer), "Found invalid peer in peer list when pinging")
+
 		if self.clock:diff_seconds(current_time, last_seen) >= self.PEER_PING_TIMEOUT then
 			-- Drop unresponsive peer.
 			self.peer_set[peer] = nil
@@ -290,8 +294,12 @@ function Node:_handle_block_forged(sender, block)
 	end
 end
 
+function Node:_is_valid_peer(peer)
+	return peer ~= self.address
+end
+
 function Node:_maybe_new_peer(peer, force)
-	if self.peer_set[peer] and not force then
+	if (not self:_is_valid_peer(peer)) or (self.peer_set[peer] and not force) then
 		return
 	end
 
@@ -305,6 +313,7 @@ end
 function Node:_broadcast(msg)
 	local bytes = message.encode(msg)
 	for peer, _ in pairs(self.peer_set) do
+		assert(self:_is_valid_peer(peer), "Found invalid peer in peer list when broadcasting")
 		self.networker:send(peer, bytes)
 	end
 end
@@ -312,7 +321,10 @@ end
 function Node:_multicast_to_validators(msg)
 	local bytes = message.encode(msg)
 	for _, validator in pairs(self.known_validators) do
-		self.networker:send(validator.peer_address, bytes)
+		-- It's legal for this node to appear in its own validator list, but obviously, we don't need to notify ourselves.
+		if validator.peer_address ~= self.address then
+			self.networker:send(validator.peer_address, bytes)
+		end
 	end
 end
 
