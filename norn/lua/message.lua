@@ -60,19 +60,6 @@ function M.caught_cheating(evidence_block_a, evidence_block_b)
 	return { M.CAUGHT_CHEATING, evidence_block_a, evidence_block_b }
 end
 
---- Requests the latest balance for the named wallet.
--- This information is discoverable through the blockchain, but this allows nodes who do not have a full copy of the chain to quickly query it from those who do (i.e., validators).
-M.REQUEST_WALLET_BALANCE = "request-wallet-balance"
-function M.request_wallet_balance(token, wallet_pubkey)
-	return { M.REQUEST_WALLET_BALANCE, token, tostring(wallet_pubkey:public_key()) }
-end
-
---- Response to a wallet balance request.
-M.WALLET_BALANCE = "wallet-balance"
-function M.wallet_balance(token, wallet_pubkey, balance)
-	return { M.WALLET_BALANCE, token, tostring(wallet_pubkey:public_key()), balance }
-end
-
 --- Sent from the owner of a wallet when they wish to spend some of their currency.
 -- The remaining data in this block is defined by the embedding application, as transactions are an application-specific concept.
 M.SPEND = "spend"
