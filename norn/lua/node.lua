@@ -124,7 +124,7 @@ function Node:_ping_peers()
 		assert(self:_is_valid_peer(peer), "Found invalid peer in peer list when pinging")
 
 		if self.clock:diff_seconds(current_time, last_seen) >= self.PEER_PING_TIMEOUT then
-			-- Drop unresponsive peer.
+			logging.debug("Dropping unresponsive peer %s", peer)
 			self.peer_set[peer] = nil
 		else
 			local msg = message.ping(current_time)
@@ -143,6 +143,7 @@ function Node:_obtain_blockchain()
 	end
 
 	-- TODO: Authenticate request with our own signature?
+	logging.debug("Requesting existing blockchain from peers")
 	self:_broadcast(message.request_blockchain(nil))
 end
 
@@ -169,7 +170,7 @@ end
 
 function Node:handle_app_defined(sender, ...)
 	-- Does nothing by default. A custom handler can be provided at init time to override this method.
-	logging.warning("Node received app-defined message it doesn't know how to handle")
+	logging.warning("Node received app-defined message it doesn't know how to handle: %s", logging.explode_table({ ... }))
 end
 
 function Node:_handle_ping(sender, token)
@@ -223,7 +224,7 @@ function Node:_set_blockchain(chain)
 	for block in self.chain:traverse_latest() do
 		local op = opcode.decode(block.data)
 		if not op then
-			logging.error("Unable to parse block %s", tohex(block.hash))
+			logging.error("Unable to parse block %s with data:\n%s", tohex(block.hash), block.data)
 		elseif op[1] == opcode.VALIDATORS_CHANGED then
 			for address, wallet in pairs(op[2]) do
 				self.known_validators[address] = Wallet.from_network_representation(wallet)
@@ -231,13 +232,17 @@ function Node:_set_blockchain(chain)
 		end
 	end
 
-	if not next(self.known_validators) then
+	if next(self.known_validators) then
+		logging.debug("Found validators from blockchain:\n%s", logging.explode_table(self.known_validators))
+	else
 		logging.debug("Received existing blockchain, but no validators are elected")
 		self:_seize_power()
 	end
 end
 
 function Node:_seize_power()
+	logging.debug("Electing self as a validator")
+
 	-- TODO: Should this issue a staking request instead of just assuming it succeeded?
 	local block = Block.forge {
 		data = opcode.encode(opcode.validators_changed {
@@ -281,6 +286,8 @@ function Node:_maybe_new_peer(peer, force)
 	if (not self:_is_valid_peer(peer)) or (self.peer_set[peer] and not force) then
 		return
 	end
+
+	logging.debug("Found new peer: %s", peer)
 
 	local t = self.clock:now()
 	self.peer_set[peer] = t
