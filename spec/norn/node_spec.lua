@@ -5,6 +5,7 @@ local Blockchain = require("norn.blockchain")
 local Clock = require("norn.clock")
 local date = require("date")
 local functional = require("norn.functional")
+local logging = require("norn.logging")
 local message = require("norn.message")
 local Node = require("norn.node")
 local opcode = require("norn.opcode")
@@ -42,6 +43,10 @@ describe("node", function ()
 	local address = "test_node_address"
 	local wallet
 	local node_template
+
+	setup(function ()
+		logging.level = logging.LOG_LEVEL_DEBUG
+	end)
 
 	before_each(function ()
 		networker = TestNetworker()

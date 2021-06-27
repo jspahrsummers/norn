@@ -2,6 +2,7 @@ local Block = require("norn.block")
 local Blockchain = require("norn.blockchain")
 local Clock = require("norn.clock")
 local functional = require("norn.functional")
+local logging = require("norn.logging")
 local message = require("norn.message")
 local opcode = require("norn.opcode")
 local PublicKey = require("norn.publickey")
@@ -136,7 +137,7 @@ end
 
 function Node:_obtain_blockchain()
 	if not next(self.peer_set) then
-		io.stderr:write("No peers available to synchronize with, starting a new network")
+		logging.debug("No peers available to synchronize with, starting a new network")
 		self:_seize_power()
 		return
 	end
@@ -162,13 +163,13 @@ function Node:handle_message(sender, msg)
 	if handler then
 		handler(self, sender, table.unpack(msg, 2))
 	else
-		io.stderr:write("Non-validator node cannot handle message ", name)
+		logging.warning("Non-validator node cannot handle message: %s", name)
 	end
 end
 
 function Node:handle_app_defined(sender, ...)
 	-- Does nothing by default. A custom handler can be provided at init time to override this method.
-	io.stderr:write("Node received app-defined message it doesn't know how to handle")
+	logging.warning("Node received app-defined message it doesn't know how to handle")
 end
 
 function Node:_handle_ping(sender, token)
@@ -202,13 +203,13 @@ end
 
 function Node:_handle_blockchain(sender, token, blocks)
 	if self.is_validator then
-		io.stderr:write(string.format("As a validator, ignoring replacement blockchain from peer node %s:\n%s", sender, chain))
+		logging.warning("As a validator, ignoring replacement blockchain from peer node %s:\n%s", sender, chain)
 		return
 	end
 	
 	-- TODO: This should reconcile the multiple blockchains somehow (e.g., longest chain rule, or build consensus using N different chains). For now, we just trust the first one we receive.
 	if #self.chain > 0 then
-		io.stderr:write(string.format("Peer node %s tried to replace our blockchain with:\n%s", sender, chain))
+		logging.warning("Peer node %s tried to replace our blockchain with:\n%s", sender, chain)
 		return
 	end
 
@@ -222,7 +223,7 @@ function Node:_set_blockchain(chain)
 	for block in self.chain:traverse_latest() do
 		local op = opcode.decode(block.data)
 		if not op then
-			io.stderr:write(string.format("Unable to parse block %s", tohex(block.hash)))
+			logging.error("Unable to parse block %s", tohex(block.hash))
 		elseif op[1] == opcode.VALIDATORS_CHANGED then
 			for address, wallet in pairs(op[2]) do
 				self.known_validators[address] = Wallet.from_network_representation(wallet)
@@ -231,7 +232,7 @@ function Node:_set_blockchain(chain)
 	end
 
 	if not next(self.known_validators) then
-		io.stderr:write("Received existing blockchain, but no validators are elected")
+		logging.debug("Received existing blockchain, but no validators are elected")
 		self:_seize_power()
 	end
 end
@@ -247,7 +248,7 @@ function Node:_seize_power()
 	}
 
 	if not self.chain:add_block(block) then
-		io.stderr.write(string.format("Could not forge new block for self-election:\n%s", block))
+		logging.error("Could not forge new block for self-election:\n%s", block)
 		return
 	end
 
@@ -262,12 +263,12 @@ end
 function Node:_handle_block_forged(sender, block)
 	-- TODO: Handle the case where there are no validators
 	if not block:verify_signers(validator_keys(self.known_validators)) then
-		io.stderr.write(string.format("Missing consensus for block sent by peer node %s:\n%s", sender, block))
+		logging.error("Missing consensus for block sent by peer node %s:\n%s", sender, block)
 		return
 	end
 
 	if not self.chain:add_block(block) then
-		io.stderr.write(string.format("Peer node %s tried to add an incompatible block to our chain:\n%s", sender, block))
+		logging.error("Peer node %s tried to add an incompatible block to our chain:\n%s", sender, block)
 		return
 	end
 end

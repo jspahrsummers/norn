@@ -24,6 +24,7 @@ build = {
       ["norn.consensus"] = "norn/lua/consensus.lua",
       ["norn.functional"] = "norn/lua/functional.lua",
       ["norn.hash"] = "norn/lua/hash.lua",
+      ["norn.logging"] = "norn/lua/logging.lua",
       ["norn.message"] = "norn/lua/message.lua",
       ["norn.networker"] = "norn/lua/networker.lua",
       ["norn.node"] = "norn/lua/node.lua",
