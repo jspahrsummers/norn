@@ -1,24 +1,25 @@
-Block = require("norn.block")
-Blockchain = require("norn.blockchain")
-hash = require("norn.hash")
-PrivateKey = require("norn.privatekey")
-PublicKey = require("norn.publickey")
-tohex = require("norn.tohex")
+local Node = require("norn.node")
+local logging = require("norn.logging")
+local Wallet = require("norn.wallet")
 
-print("hash", tohex(hash("foobar")))
+local DemoNetworker = require("norn.demo.networker")
+local EXIT_SUCCESS = "EXIT_SUCCESS"
 
-key = PrivateKey()
-signature = key:sign("foobar")
-print("key", key)
-print("signature", tohex(signature))
-print("verifies?", key:verify(signature, "foobar"))
+local main_coro = coroutine.wrap(function ()
+	logging.level = logging.LOG_LEVEL_DEBUG
 
-pubkey = key:public_key()
-print("pubkey", pubkey)
-print("pubkey verifies?", pubkey:verify(signature, "foobar"))
+	local a = DemoNetworker("a")
+	local b = DemoNetworker("b")
 
--- block = Block { data = "foobar", key = key }
--- block2 = Block { data = "fuzzbuzz", key = key, previous_hash = block.hash }
--- 
--- blockchain = Blockchain { block, block2 }
--- print(blockchain)
+	a:send(b.address, 5)
+	local sender, bytes = b:recv()
+	logging.debug("sender: %s", logging.explode(sender))
+	logging.debug("bytes: %s", bytes)
+
+	return EXIT_SUCCESS
+end)
+
+local result
+repeat
+	result = main_coro()
+until result == EXIT_SUCCESS

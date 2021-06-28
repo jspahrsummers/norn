@@ -15,5 +15,6 @@ build = {
    type = "builtin",
    modules = {
       ["norn.demo"] = "norn-demo/lua/main.lua",
+      ["norn.demo.networker"] = "norn-demo/lua/networker.lua",
    }
 }
