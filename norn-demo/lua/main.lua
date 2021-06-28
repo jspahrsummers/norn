@@ -24,10 +24,10 @@ local nodes = {
 }
 
 local addresses = {}
-local fns = {}
+local coros = {}
 for _, node in ipairs(nodes) do
 	table.insert(addresses, node.address)
-	table.insert(fns, coroutine.wrap(function ()
+	table.insert(coros, coroutine.create(function ()
 		node:add_peer_list(addresses)
 		node:run()
 	end))
@@ -35,7 +35,11 @@ end
 
 for t = 1, 1000 do
 	clock.current_time = t
-	for _, fn in ipairs(fns) do
-		fn()
+	for _, coro in ipairs(coros) do
+		local success, err = coroutine.resume(coro)
+		if not success then
+			logging.error("Demo exiting due to error: %s", debug.traceback(coro, err))
+			return 1
+		end
 	end
 end
