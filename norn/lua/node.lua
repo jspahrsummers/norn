@@ -170,7 +170,7 @@ end
 
 function Node:handle_app_defined(sender, ...)
 	-- Does nothing by default. A custom handler can be provided at init time to override this method.
-	logging.warning("Node received app-defined message it doesn't know how to handle: %s", logging.explode_table({ ... }))
+	logging.warning("Node received app-defined message it doesn't know how to handle: %s", logging.explode({ ... }))
 end
 
 function Node:_handle_ping(sender, token)
@@ -233,7 +233,7 @@ function Node:_set_blockchain(chain)
 	end
 
 	if next(self.known_validators) then
-		logging.debug("Found validators from blockchain:\n%s", logging.explode_table(self.known_validators))
+		logging.debug("Found validators from blockchain:\n%s", logging.explode(self.known_validators))
 	else
 		logging.debug("Received existing blockchain, but no validators are elected")
 		self:_seize_power()

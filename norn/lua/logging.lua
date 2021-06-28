@@ -27,7 +27,7 @@ end
 local LoggableTable = {}
 LoggableTable.__index = LoggableTable
 
-function M.explode_table(tbl)
+function M.explode(tbl)
 	if type(tbl) ~= "table" then
 		return tbl
 	end
@@ -39,7 +39,7 @@ function M.explode_table(tbl)
 
 	local tbl_copy = setmetatable({}, LoggableTable)
 	for k, v in pairs(tbl) do
-		tbl_copy[M.explode_table(k)] = M.explode_table(v)
+		tbl_copy[M.explode(k)] = M.explode(v)
 	end
 
 	return tbl_copy
