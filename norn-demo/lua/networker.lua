@@ -1,3 +1,5 @@
+local logging = require("norn.logging")
+
 local Networker = {}
 Networker.__index = Networker
 Networker._addresses = {}
@@ -20,10 +22,12 @@ function Networker:init(address)
 end
 
 function Networker:send(dest, bytes)
+	logging.debug("%s sending to %s: %s", self.address, logging.explode(dest), bytes)
+
 	local networker = self._addresses[dest]
 	assert(networker, "Could not find destination address")
 
-	table.insert(networker.queue, { dest, bytes })
+	table.insert(networker.queue, { self.address, bytes })
 end
 
 function Networker:recv()
@@ -31,7 +35,7 @@ function Networker:recv()
 		coroutine.yield()
 	end
 
-	return table.remove(self.queue, 1)
+	return table.unpack(table.remove(self.queue, 1))
 end
 
 return Networker
