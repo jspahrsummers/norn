@@ -62,8 +62,16 @@ function LoggableTable:__tostring()
 		return "{}"
 	end
 
+	local keys = {}
+	for k, _ in pairs(self) do
+		table.insert(keys, k)
+	end
+
+	table.sort(keys)
+
 	local s = "{"
-	for k, v in pairs(self) do
+	for _, k in ipairs(keys) do
+		local v = self[k]
 		s = s .. string.format("\n\t[%s] = %s", indent(quoted_tostring(k)), indent(quoted_tostring(v)))
 	end
 

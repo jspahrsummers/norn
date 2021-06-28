@@ -20,12 +20,12 @@ describe("logging", function ()
 }]])
 		end)
 
-		it("should quote string keys", function ()
+		it("should sort and quote string keys", function ()
 			local tbl = { foo = 5, bar = 10 }
 			local s = tostring(logging.explode(tbl))
 			assert.equals(s, [[{
-	["foo"] = 5
 	["bar"] = 10
+	["foo"] = 5
 }]])
 		end)
 
