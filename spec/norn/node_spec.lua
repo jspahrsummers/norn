@@ -25,11 +25,11 @@ setmetatable(TestNetworker, {
 
 local EXPECTED_PEER_PING_INTERVAL = Node.PEER_PING_MIN_INTERVAL + Node.PEER_PING_MAX_JITTER + 1
 
-local function resume_until(coro, predicate, message)
+local function retry_until(coro, predicate, message)
 	local t = os.time()
 	local i = 1
 	while not predicate(i) and os.difftime(os.time(), t) < 3 do
-		coroutine.resume(coro)
+		coro()
 		i = i + 1
 	end
 
@@ -119,18 +119,18 @@ describe("node", function ()
 		node_template.peer_list = { "a", "b" }
 
 		local node = Node(node_template)
-		local coro = coroutine.create(function ()
+		local coro = coroutine.wrap(function ()
 			node:run()
 		end)
 
-		coroutine.resume(coro)
+		coro()
 		c:advance(EXPECTED_PEER_PING_INTERVAL)
 
 		local function is_ping(k, v)
 			return message.decode(v.bytes)[1] == message.PING
 		end
 
-		resume_until(coro, function ()
+		retry_until(coro, function ()
 			return functional.count_keys(functional.find_all(networker.sent, is_ping)) == 2
 		end, "Expected to find two ping messages")
 
@@ -153,12 +153,12 @@ describe("node", function ()
 		node_template.peer_list = { "a", "b" }
 
 		local node = Node(node_template)
-		local coro = coroutine.create(function ()
+		local coro = coroutine.wrap(function ()
 			node:run()
 		end)
 
 		-- Set up timers, etc.
-		coroutine.resume(coro)
+		coro()
 
 		c:advance(EXPECTED_PEER_PING_INTERVAL)
 
@@ -169,9 +169,9 @@ describe("node", function ()
 		c:advance(Node.PEER_PING_TIMEOUT)
 
 		local t = os.time()
-		while node.peer_set["a"] and os.difftime(os.time(), t) < 3 do
-			coroutine.resume(coro)
-		end
+		retry_until(coro, function ()
+			return not node.peer_set["a"]
+		end, "Expected to drop unresponsive peer")
 
 		assert.is_nil(node.peer_set["a"])
 		assert.is.not_nil(node.peer_set["b"])
