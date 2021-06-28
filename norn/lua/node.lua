@@ -52,16 +52,10 @@ function Node:init()
 		self.clock = Clock.os()
 	end
 
+	self.peer_set = {}
 	if self.peer_list then
-		self.peer_set = {}
-		for _, peer in pairs(self.peer_list) do
-			assert(self:_is_valid_peer(peer), "Invalid peer provided at initialization time")
-			self.peer_set[peer] = 0
-		end
-
+		self:add_peer_list(self.peer_list)
 		self.peer_list = nil
-	else
-		self.peer_set = {}
 	end
 
 	self.is_validator = false
@@ -71,6 +65,15 @@ function Node:init()
 		self:_set_blockchain(self.chain)
 	else
 		self.chain = Blockchain {}
+	end
+end
+
+-- Must be called before run().
+function Node:add_peer_list(peer_list)
+	for _, peer in pairs(peer_list) do
+		if self:_is_valid_peer(peer) then
+			self.peer_set[peer] = self.peer_set[peer] or 0
+		end
 	end
 end
 
