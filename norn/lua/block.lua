@@ -37,7 +37,7 @@ function Block.forge(proposed)
 
 	proposed.signatures = {}
 	for _, key in pairs(proposed.keys) do
-		proposed.signatures[#proposed.signatures + 1] = key:sign(proposed.hash)
+		table.insert(proposed.signatures, key:sign(proposed.hash))
 	end
 
 	proposed.keys = nil

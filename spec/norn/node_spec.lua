@@ -162,7 +162,7 @@ describe("node", function ()
 
 		c:advance(EXPECTED_PEER_PING_INTERVAL)
 
-		networker.recv_queue[#networker.recv_queue + 1] = { "b", message.encode(message.pong(nil)) }
+		table.insert(networker.recv_queue, { "b", message.encode(message.pong(nil)) })
 		assert.is.not_nil(node.peer_set["a"])
 		assert.is.not_nil(node.peer_set["b"])
 
@@ -208,7 +208,7 @@ describe("node", function ()
 			for _, op in ipairs { ... } do
 				local data = opcode.encode(op)
 				local block = Block.forge { data = data, previous_hash = last, keys = { privkey }}
-				blocks[#blocks + 1] = block
+				table.insert(blocks, block)
 				last = block.hash
 			end
 
@@ -284,10 +284,7 @@ function TestNetworker:send(dest, bytes)
 		error(self.send_error)
 	end
 
-	self.sent[#self.sent + 1] = {
-		dest = dest,
-		bytes = bytes
-	}
+	table.insert(self.sent, { dest = dest, bytes = bytes })
 end
 
 function TestNetworker:recv()

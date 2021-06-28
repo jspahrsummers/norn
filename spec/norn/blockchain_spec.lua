@@ -84,7 +84,7 @@ describe("blockchain", function ()
 		local chain = Blockchain { first, second, third }
 		local traversed = {}
 		for block in chain:traverse_latest() do
-			traversed[#traversed + 1] = block
+			table.insert(traversed, block)
 		end
 
 		assert.not_nil(chain)

@@ -27,7 +27,7 @@ setmetatable(Node, {
 local function peer_set_to_list(peer_set)
 	local list = {}
 	for peer, _ in pairs(peer_set) do
-		list[#list + 1] = peer
+		table.insert(list, peer)
 	end
 
 	table.sort(list)
@@ -37,7 +37,7 @@ end
 local function validator_keys(validators)
 	local keys = {}
 	for address, wallet in pairs(validators) do
-		keys[#keys + 1] = wallet.key
+		table.insert(keys, wallet.key)
 	end
 
 	return keys
