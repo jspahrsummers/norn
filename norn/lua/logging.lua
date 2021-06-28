@@ -8,19 +8,19 @@ M.level = M.LOG_LEVEL_WARNING
 
 function M.error(fmt, ...)
 	if M.level >= M.LOG_LEVEL_ERROR then
-		io.stderr:write("[ERROR]", string.format(fmt, ...))
+		io.stderr:write("[ERROR] ", string.format(fmt, ...), "\n")
 	end
 end
 
 function M.warning(fmt, ...)
 	if M.level >= M.LOG_LEVEL_WARNING then
-		io.stderr:write("[WARNING]", string.format(fmt, ...))
+		io.stderr:write("[WARNING] ", string.format(fmt, ...), "\n")
 	end
 end
 
 function M.debug(fmt, ...)
 	if M.level >= M.LOG_LEVEL_DEBUG then
-		io.stderr:write("[DEBUG]", string.format(fmt, ...))
+		io.stderr:write("[DEBUG] ", string.format(fmt, ...), "\n")
 	end
 end
 
