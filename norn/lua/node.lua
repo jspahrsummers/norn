@@ -94,8 +94,13 @@ function Node:run()
 	}
 
 	while true do
-		for _, coro in ipairs(coros) do
-			coroutine.resume(coro)
+		for i = #coros, 1, -1 do
+			local coro = coros[i]
+			local success, err = coroutine.resume(coro)
+			if not success then
+				table.remove(coros, i)
+				logging.error("Node coroutine failed with error: %s", debug.traceback(coro, err))
+			end
 		end
 
 		coroutine.yield()
