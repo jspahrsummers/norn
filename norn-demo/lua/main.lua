@@ -19,8 +19,8 @@ local function create_node(name)
 end
 
 local nodes = {
-	create_node("a"),
-	create_node("b"),
+	create_node("A"),
+	create_node("B"),
 }
 
 local addresses = {}

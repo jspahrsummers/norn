@@ -100,7 +100,7 @@ function Node:run()
 		for _, coro in ipairs(coros) do
 			local success, err = coroutine.resume(coro)
 			if not success then
-				logging.error("Node coroutine failed with error: %s", debug.traceback(coro, err))
+				logging.error("%s coroutine failed with error: %s", self.address, debug.traceback(coro, err))
 				error("Node dying due to coroutine failure")
 			end
 		end
@@ -131,7 +131,7 @@ function Node:_ping_peers()
 		assert(self:_is_valid_peer(peer), "Found invalid peer in peer list when pinging")
 
 		if self.clock:diff_seconds(current_time, last_seen) >= self.PEER_PING_TIMEOUT then
-			logging.debug("Dropping unresponsive peer %s", peer)
+			logging.debug("%s dropping unresponsive peer %s", self.address, peer)
 			self.peer_set[peer] = nil
 		else
 			local msg = message.ping(current_time)
@@ -144,13 +144,13 @@ end
 
 function Node:_obtain_blockchain()
 	if not next(self.peer_set) then
-		logging.debug("No peers available to synchronize with, starting a new network")
+		logging.debug("%s has no peers available to synchronize with, starting a new network", self.address)
 		self:_seize_power()
 		return
 	end
 
 	-- TODO: Authenticate request with our own signature?
-	logging.debug("Requesting existing blockchain from peers")
+	logging.debug("%s requesting existing blockchain from peers", self.address)
 	self:_broadcast(message.request_blockchain(nil))
 end
 
@@ -171,13 +171,13 @@ function Node:handle_message(sender, msg)
 	if handler then
 		handler(self, sender, table.unpack(msg, 2))
 	else
-		logging.warning("Non-validator node cannot handle message: %s", name)
+		logging.warning("%s is not a validator, cannot handle message: %s", self.address, name)
 	end
 end
 
 function Node:handle_app_defined(sender, ...)
 	-- Does nothing by default. A custom handler can be provided at init time to override this method.
-	logging.warning("Node received app-defined message it doesn't know how to handle: %s", logging.explode({ ... }))
+	logging.warning("%s received app-defined message without a handler installed: %s", self.address, logging.explode({ ... }))
 end
 
 function Node:_handle_ping(sender, token)
@@ -211,13 +211,13 @@ end
 
 function Node:_handle_blockchain(sender, token, blocks)
 	if self.is_validator then
-		logging.warning("As a validator, ignoring replacement blockchain from peer node %s:\n%s", sender, chain)
+		logging.warning("%s is a validator, ignoring replacement blockchain from peer %s:\n%s", self.address, sender, chain)
 		return
 	end
 	
 	-- TODO: This should reconcile the multiple blockchains somehow (e.g., longest chain rule, or build consensus using N different chains). For now, we just trust the first one we receive.
 	if #self.chain > 0 then
-		logging.warning("Peer node %s tried to replace our blockchain with:\n%s", sender, chain)
+		logging.warning("%s ignoring peer %s trying to replace blockchain with:\n%s", self.address, sender, chain)
 		return
 	end
 
@@ -231,7 +231,7 @@ function Node:_set_blockchain(chain)
 	for block in self.chain:traverse_latest() do
 		local op = opcode.decode(block.data)
 		if not op then
-			logging.error("Unable to parse block %s with data:\n%s", tohex(block.hash), block.data)
+			logging.error("%s unable to parse block %s with data:\n%s", self.address, tohex(block.hash), block.data)
 		elseif op[1] == opcode.VALIDATORS_CHANGED then
 			for address, wallet in pairs(op[2]) do
 				self.known_validators[address] = Wallet.from_network_representation(wallet)
@@ -240,15 +240,15 @@ function Node:_set_blockchain(chain)
 	end
 
 	if next(self.known_validators) then
-		logging.debug("Found validators from blockchain:\n%s", logging.explode(self.known_validators))
+		logging.debug("%s found validators from blockchain:\n%s", self.address, logging.explode(self.known_validators))
 	else
-		logging.debug("Received existing blockchain, but no validators are elected")
+		logging.debug("%s received existing blockchain, but no validators are elected", self.address)
 		self:_seize_power()
 	end
 end
 
 function Node:_seize_power()
-	logging.debug("Electing self as a validator")
+	logging.debug("%s electing self as a validator", self.address)
 
 	-- TODO: Should this issue a staking request instead of just assuming it succeeded?
 	local block = Block.forge {
@@ -260,7 +260,7 @@ function Node:_seize_power()
 	}
 
 	if not self.chain:add_block(block) then
-		logging.error("Could not forge new block for self-election:\n%s", block)
+		logging.error("%s could not forge new block for self-election:\n%s", self.address, block)
 		return
 	end
 
@@ -275,12 +275,12 @@ end
 function Node:_handle_block_forged(sender, block)
 	-- TODO: Handle the case where there are no validators
 	if not block:verify_signers(validator_keys(self.known_validators)) then
-		logging.error("Missing consensus for block sent by peer node %s:\n%s", sender, block)
+		logging.error("%s missing consensus for block sent by peer %s:\n%s", self.address, sender, block)
 		return
 	end
 
 	if not self.chain:add_block(block) then
-		logging.error("Peer node %s tried to add an incompatible block to our chain:\n%s", sender, block)
+		logging.error("%s ignoring incompatible block sent by peer %s:\n%s", self.address, sender, block)
 		return
 	end
 end
@@ -294,7 +294,7 @@ function Node:_maybe_new_peer(peer, force)
 		return
 	end
 
-	logging.debug("Found new peer: %s", peer)
+	logging.debug("%s found new peer %s", self.address, peer)
 
 	local t = self.clock:now()
 	self.peer_set[peer] = t
