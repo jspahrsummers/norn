@@ -19,27 +19,39 @@ local function create_node(name)
 end
 
 local nodes = {
-	create_node("A"),
-	create_node("B"),
+	[create_node("A")] = 1,
+	[create_node("B")] = 100,
 }
 
 local addresses = {}
 local coros = {}
-for _, node in ipairs(nodes) do
-	table.insert(addresses, node.address)
-	table.insert(coros, coroutine.create(function ()
-		node:add_peer_list(addresses)
+for node, start_time in pairs(nodes) do
+	addresses[node.address] = start_time
+
+	local coro = coroutine.create(function ()
+		logging.debug("Starting %s at time %s", node.address, clock.current_time)
+
+		for address, t in pairs(addresses) do
+			if start_time >= t then
+				node:add_peer_list({ address })
+			end
+		end
+
 		node:run()
-	end))
+	end)
+
+	coros[coro] = start_time
 end
 
 for t = 1, 1000 do
 	clock.current_time = t
-	for _, coro in ipairs(coros) do
-		local success, err = coroutine.resume(coro)
-		if not success then
-			logging.error("Demo exiting due to error: %s", debug.traceback(coro, err))
-			return 1
+	for coro, start_time in pairs(coros) do
+		if t >= start_time then
+			local success, err = coroutine.resume(coro)
+			if not success then
+				logging.error("Demo exiting due to error: %s", debug.traceback(coro, err))
+				return 1
+			end
 		end
 	end
 end
