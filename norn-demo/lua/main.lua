@@ -21,6 +21,7 @@ end
 local nodes = {
 	[create_node("A")] = 1,
 	[create_node("B")] = 100,
+	[create_node("C")] = 100,
 }
 
 local addresses = {}
