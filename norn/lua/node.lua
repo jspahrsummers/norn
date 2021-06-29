@@ -201,7 +201,7 @@ function Node:_handle_peer_list(sender, maybe_token, peers)
 end
 
 function Node:_handle_request_blockchain(sender, token)
-	if not self.chain then
+	if #self.chain == 0 then
 		return
 	end
 
@@ -210,6 +210,10 @@ function Node:_handle_request_blockchain(sender, token)
 end
 
 function Node:_handle_blockchain(sender, token, chain)
+	if #chain == 0 then
+		return
+	end
+
 	if self.is_validator then
 		logging.warning("%s is a validator, ignoring replacement blockchain from peer %s:\n%s", self.address, sender, chain)
 		return
