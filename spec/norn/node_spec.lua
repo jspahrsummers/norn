@@ -244,7 +244,9 @@ describe("node", function ()
 		
 		it("should be loaded from network", function ()
 			local node = Node(node_template)
-			local chain = create_blockchain(opcode.app_defined("foobar"), opcode.app_defined("fuzzbuzz"))
+			-- Have to include a validators_changed block, or else the node will try to self-elect
+			local validators_and_wallets = { ["192.168.0.1"] = Wallet.create() }
+			local chain = create_blockchain(opcode.app_defined("foobar"), opcode.app_defined("fuzzbuzz"), opcode.validators_changed(validators_and_wallets))
 			assert.are_not.equal(node.chain, chain)
 
 			local sender = "test_sender"
