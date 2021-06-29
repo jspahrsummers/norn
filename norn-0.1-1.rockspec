@@ -14,6 +14,7 @@ dependencies = {
    "date ~> 2.1.3",
    "lua-cjson == 2.1.0",
    "luaossl >= 20200709",
+   "basexx ~> 0.4",
 }
 build = {
    type = "builtin",
