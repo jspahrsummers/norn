@@ -98,7 +98,7 @@ function Block:network_representation()
 		timestamp = self.timestamp:fmt("${iso}"),
 		data = self.data, -- should be JSON-encoded already
 		hash = string.lower(basexx.to_hex(self.hash)),
-		previous_hash = self.previous_hash and string.lower(basexx.to_hex(self.hash)) or nil,
+		previous_hash = self.previous_hash and string.lower(basexx.to_hex(self.previous_hash)) or nil,
 		signatures = encoded_signatures,
 	}
 end
