@@ -1,3 +1,5 @@
+local basexx = require("basexx")
+
 local M = {}
 setmetatable(M, {
 	__call = function (cls, ...)
@@ -6,8 +8,7 @@ setmetatable(M, {
 })
 
 function M.tohex(b)
-	local s = string.gsub(b, "(.)", function (x) return string.format("%.1x", string.byte(x)) end)
-	return s
+	return string.lower(basexx.to_hex(b))
 end
 
 return M
