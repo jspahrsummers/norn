@@ -209,7 +209,7 @@ function Node:_handle_request_blockchain(sender, token)
 	self.networker:send(sender, message.encode(msg))
 end
 
-function Node:_handle_blockchain(sender, token, blocks)
+function Node:_handle_blockchain(sender, token, chain)
 	if self.is_validator then
 		logging.warning("%s is a validator, ignoring replacement blockchain from peer %s:\n%s", self.address, sender, chain)
 		return
@@ -221,7 +221,7 @@ function Node:_handle_blockchain(sender, token, blocks)
 		return
 	end
 
-	self:_set_blockchain(Blockchain(blocks))
+	self:_set_blockchain(Blockchain.from_network_representation(chain))
 end
 
 function Node:_set_blockchain(chain)

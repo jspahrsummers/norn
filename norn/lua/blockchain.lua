@@ -33,6 +33,15 @@ function Blockchain:init(blocks)
 	self.blocks = blocks
 end
 
+function Blockchain.from_network_representation(tbl)
+	local blocks = {}
+	for _, block_tbl in ipairs(tbl) do
+		table.insert(blocks, Block.from_network_representation(block_tbl))
+	end
+
+	return Blockchain(blocks)
+end
+
 function Blockchain:latest_block()
 	return self.blocks[#self.blocks]
 end
@@ -56,6 +65,15 @@ function Blockchain:traverse_latest()
 		idx = idx - 1
 		return block
 	end
+end
+
+function Blockchain:network_representation()
+	local network_blocks = {}
+	for _, block in ipairs(self.blocks) do
+		table.insert(network_blocks, block:network_representation())
+	end
+
+	return network_blocks
 end
 
 function Blockchain:__len()

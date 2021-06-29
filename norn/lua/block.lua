@@ -81,7 +81,7 @@ function Block.from_network_representation(tbl)
 
 	return Block {
 		timestamp = date(tbl.timestamp),
-		data = basexx.from_base64(tbl.data),
+		data = tbl.data,
 		hash = basexx.from_hex(tbl.hash),
 		previous_hash = tbl.previous_hash and basexx.from_hex(tbl.previous_hash) or nil,
 		signatures = signatures,
@@ -96,7 +96,7 @@ function Block:network_representation()
 
 	return {
 		timestamp = self.timestamp:fmt("${iso}"),
-		data = basexx.to_base64(self.data),
+		data = self.data, -- should be JSON-encoded already
 		hash = string.lower(basexx.to_hex(self.hash)),
 		previous_hash = self.previous_hash and string.lower(basexx.to_hex(self.hash)) or nil,
 		signatures = encoded_signatures,

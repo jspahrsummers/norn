@@ -77,7 +77,7 @@ end
 --- Response to a blockchain request.
 M.BLOCKCHAIN = "blockchain"
 function M.blockchain(token, chain)
-	return { M.BLOCKCHAIN, token, chain.blocks }
+	return { M.BLOCKCHAIN, token, chain:network_representation() }
 end
 
 --- Sent to all nodes when validators have forged a new block for the chain.
