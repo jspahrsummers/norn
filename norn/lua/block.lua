@@ -1,6 +1,7 @@
 local Block = {}
 Block.__index = Block
 
+local basexx = require("basexx")
 local consensus = require("norn.consensus")
 local date = require("date")
 local hash = require("norn.hash")
@@ -72,8 +73,52 @@ function Block.compute_hash(obj)
 	return hash(obj.timestamp:fmt("${iso}"), obj.previous_hash or "", obj.data)
 end
 
+function Block.from_network_representation(tbl)
+	local signatures = {}
+	for _, sig in pairs(tbl.signatures) do
+		table.insert(signatures, basexx.from_base64(sig))
+	end
+
+	return Block {
+		timestamp = date(tbl.timestamp),
+		data = basexx.from_base64(tbl.data),
+		hash = basexx.from_hex(tbl.hash),
+		previous_hash = tbl.previous_hash and basexx.from_hex(tbl.previous_hash) or nil,
+		signatures = signatures,
+	}
+end
+
+function Block:network_representation()
+	local encoded_signatures = {}
+	for _, sig in pairs(self.signatures) do
+		table.insert(encoded_signatures, basexx.to_base64(sig))
+	end
+
+	return {
+		timestamp = self.timestamp:fmt("${iso}"),
+		data = basexx.to_base64(self.data),
+		hash = string.lower(basexx.to_hex(self.hash)),
+		previous_hash = self.previous_hash and string.lower(basexx.to_hex(self.hash)) or nil,
+		signatures = encoded_signatures,
+	}
+end
+
 function Block:__eq(other)
-	return self.hash == other.hash and self.timestamp == other.timestamp and self.previous_hash == other.previous_hash and self.signatures == other.signatures and self.data == other.data
+	if not (self.hash == other.hash and self.timestamp == other.timestamp and self.previous_hash == other.previous_hash and self.data == other.data) then
+		return false
+	end
+
+	if #self.signatures ~= #other.signatures then
+		return false
+	end
+
+	for i, sig in ipairs(self.signatures) do
+		if self.signatures[i] ~= other.signatures[i] then
+			return false
+		end
+	end
+
+	return true
 end
 
 function Block:__tostring()

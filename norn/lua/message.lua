@@ -57,7 +57,7 @@ end
 -- The remaining validators should confirm a block to apply a penalty to the cheating wallet(s).
 M.CAUGHT_CHEATING = "caught-cheating"
 function M.caught_cheating(evidence_block_a, evidence_block_b)
-	return { M.CAUGHT_CHEATING, evidence_block_a, evidence_block_b }
+	return { M.CAUGHT_CHEATING, evidence_block_a:network_representation(), evidence_block_b:network_representation() }
 end
 
 --- Sent from the owner of a wallet when they wish to spend some of their currency.
@@ -83,7 +83,7 @@ end
 --- Sent to all nodes when validators have forged a new block for the chain.
 M.BLOCK_FORGED = "block-forged"
 function M.block_forged(block)
-	return { M.BLOCK_FORGED, block }
+	return { M.BLOCK_FORGED, block:network_representation() }
 end
 
 M.encode = cjson.encode

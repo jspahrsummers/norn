@@ -25,7 +25,7 @@ end
 -- The new balance cannot be higher than the previous balance.
 M.WALLET_PENALTY = "wallet-penalty"
 function M.wallet_penalty(wallet_with_new_balance, evidence_block_a, evidence_block_b)
-	return { M.WALLET_PENALTY, wallet_with_new_balance:network_representation(), evidence_block_a, evidence_block_b }
+	return { M.WALLET_PENALTY, wallet_with_new_balance:network_representation(), evidence_block_a:network_representation(), evidence_block_b:network_representation() }
 end
 
 --- Written when the owner of a wallet has spent some of their currency.

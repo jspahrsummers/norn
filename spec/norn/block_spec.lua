@@ -88,6 +88,19 @@ describe("block", function ()
 		assert.are.equal(block, block)
 	end)
 
+	it("should compare equal to itself after serialization", function ()
+		local proposed = {
+			timestamp = date(true),
+			data = "foobar",
+		}
+
+		proposed.hash = Block.compute_hash(proposed)
+		proposed.signatures = { keys[1]:sign(proposed.hash) }
+
+		local block = Block(proposed)
+		assert.are.equal(Block.from_network_representation(block:network_representation()), block)
+	end)
+
 	it("should not compare equal to different block", function ()
 		local proposed = {
 			timestamp = date(true),

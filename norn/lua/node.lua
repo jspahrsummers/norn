@@ -242,6 +242,7 @@ function Node:_set_blockchain(chain)
 	if next(self.known_validators) then
 		logging.debug("%s found validators from blockchain:\n%s", self.address, logging.explode(self.known_validators))
 	else
+		-- TODO: Introduce jitter to minimize chances of multiple nodes self-electing (but really, we shouldn't get into this state anyways)
 		logging.debug("%s received existing blockchain, but no validators are elected", self.address)
 		self:_seize_power()
 	end
@@ -272,7 +273,9 @@ function Node:_seize_power()
 	self:_broadcast(msg)
 end
 
-function Node:_handle_block_forged(sender, block)
+function Node:_handle_block_forged(sender, block_network_repr)
+	local block = Block.from_network_representation(block_network_repr)
+
 	-- TODO: Handle the case where there are no validators
 	if not block:verify_signers(validator_keys(self.known_validators)) then
 		logging.error("%s missing consensus for block sent by peer %s:\n%s", self.address, sender, block)
