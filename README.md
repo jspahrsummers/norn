@@ -63,24 +63,10 @@ The latest version of LuaRocks ([v3.7.0](https://github.com/luarocks/luarocks/re
 To build and install _norn_ for your user, run the following from the repository's folder:
 
 ```sh
-luarocks make --local norn-[^d]*.rockspec
+luarocks make --local
 ```
 
 If you want to install the library globally (note: you probably don't), just drop the `--local` flag.
-
-### Run the demo
-
-The demo can be built and installed the same way as the library:
-
-```sh
-luarocks make --local norn-demo-*.rockspec
-```
-
-… then run like so:
-
-```sh
-lua -l norn.demo
-```
 
 ### Run the tests
 
@@ -95,6 +81,10 @@ Then, you can run tests by simply invoking it from the repository root:
 ```sh
 busted
 ```
+
+### Demos
+
+The [demos](demos/) folder contains different examples of using Norn in projects. See the [README](demos/#readme) for more information.
 
 ## License
 
