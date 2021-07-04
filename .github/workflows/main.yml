@@ -15,10 +15,7 @@ jobs:
       - uses: leafo/gh-actions-luarocks@v4
 
       - name: Make norn
-        run: luarocks make --local norn-0.*.rockspec
-
-      - name: Make norn-demo
-        run: luarocks make --local norn-demo-*.rockspec
+        run: luarocks make --local
       
       - name: Install test runner
         run: luarocks install busted
@@ -26,5 +23,8 @@ jobs:
       - name: Run tests
         run: busted --shuffle -o utfTerminal
       
-      - name: Run demo
-        run: lua -l norn.demo -e ''
+      - name: Run norn-demo
+        working-directory: demos/norn-demo
+        run: |
+          luarocks make --local
+          lua -l norn.demo -e ''
