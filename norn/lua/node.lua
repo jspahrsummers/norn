@@ -44,7 +44,6 @@ end
 
 function Node:init()
 	assert(self.networker, "Node must be created with a networker to use")
-	assert(self.crypto, "Node must be created with a crypto implementation to use")
 	assert(self.address, "Node must be created with an address")
 	assert(self.wallet, "Node must be created with a wallet")
 
