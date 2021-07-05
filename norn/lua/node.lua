@@ -5,7 +5,6 @@ local functional = require("norn.functional")
 local logging = require("norn.logging")
 local message = require("norn.message")
 local opcode = require("norn.opcode")
-local PublicKey = require("norn.publickey")
 local tohex = require("norn.tohex")
 local timer = require("norn.timer")
 local Wallet = require("norn.wallet")
@@ -45,6 +44,7 @@ end
 
 function Node:init()
 	assert(self.networker, "Node must be created with a networker to use")
+	assert(self.crypto, "Node must be created with a crypto implementation to use")
 	assert(self.address, "Node must be created with an address")
 	assert(self.wallet, "Node must be created with a wallet")
 

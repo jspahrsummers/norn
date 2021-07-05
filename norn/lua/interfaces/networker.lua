@@ -1,4 +1,3 @@
---- Abstract interface, uninstantiable and meant to be implemented by the embedding application.
 local Networker = {}
 Networker.__index = Networker
 
