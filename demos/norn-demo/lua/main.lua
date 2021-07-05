@@ -1,3 +1,5 @@
+require('norn.demo.crypto')
+
 local Clock = require("norn.clock")
 local Node = require("norn.node")
 local logging = require("norn.logging")

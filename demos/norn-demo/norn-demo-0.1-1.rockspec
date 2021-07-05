@@ -10,11 +10,13 @@ description = {
 }
 dependencies = {
    "norn",
+   "luaossl >= 20200709",
 }
 build = {
    type = "builtin",
    modules = {
       ["norn.demo"] = "lua/main.lua",
+      ["norn.demo.crypto"] = "lua/crypto.lua",
       ["norn.demo.networker"] = "lua/networker.lua",
    }
 }

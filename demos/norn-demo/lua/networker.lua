@@ -1,3 +1,5 @@
+require('norn.demo.crypto')
+
 local logging = require("norn.logging")
 
 local Networker = {}
