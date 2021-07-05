@@ -65,7 +65,6 @@ describe("messages", function ()
 
 	it("should encode and decode", function ()
 		for m, b in pairs(all_messages) do
-			print("Encoding ", m)
 			local original = b()
 			assert.are.same(message.decode(message.encode(original)), original)
 		end
