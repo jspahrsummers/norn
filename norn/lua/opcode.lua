@@ -1,4 +1,4 @@
-local cjson = require("cjson.safe")
+local lunajson = require("lunajson")
 
 --- This module contains opcodes that are encoded in blocks on the blockchain.
 local M = {}
@@ -42,7 +42,7 @@ function M.minted(wallet_with_new_balance, ...)
 	return { M.MINTED, wallet_with_new_balance:network_representation(), ... }
 end
 
-M.encode = cjson.encode
-M.decode = cjson.decode
+M.encode = lunajson.encode
+M.decode = lunajson.decode
 
 return M

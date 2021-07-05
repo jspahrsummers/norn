@@ -1,4 +1,4 @@
-local cjson = require("cjson.safe")
+local lunajson = require("lunajson")
 
 --- This module contains messages that are sent between nodes but _not_ encoded as-is into the blockchain.
 local M = {}
@@ -86,7 +86,7 @@ function M.block_forged(block)
 	return { M.BLOCK_FORGED, block:network_representation() }
 end
 
-M.encode = cjson.encode
-M.decode = cjson.decode
+M.encode = lunajson.encode
+M.decode = lunajson.decode
 
 return M
