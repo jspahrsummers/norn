@@ -124,6 +124,14 @@ dependencies = {
             name = "basexx"
          }
       }
+   },
+   ["norn-demo"] = {
+      ["0.1-1"] = {
+         {
+            constraints = {},
+            name = "norn"
+         }
+      }
    }
 }
 modules = {
@@ -148,6 +156,12 @@ modules = {
    lua2json = {
       "lua-cjson/2.1.0-1"
    },
+   main = {
+      "norn-demo/0.1-1"
+   },
+   networker = {
+      "norn-demo/0.1-1"
+   },
    ["norn.block"] = {
       "norn/0.1-1"
    },
@@ -159,6 +173,12 @@ modules = {
    },
    ["norn.consensus"] = {
       "norn/0.1-1"
+   },
+   ["norn.demo"] = {
+      "norn-demo/0.1-1"
+   },
+   ["norn.demo.networker"] = {
+      "norn-demo/0.1-1"
    },
    ["norn.functional"] = {
       "norn/0.1-1"
@@ -380,6 +400,27 @@ repository = {
                ["norn.timer"] = "norn/timer.lua",
                ["norn.tohex"] = "norn/tohex.lua",
                ["norn.wallet"] = "norn/wallet.lua"
+            }
+         }
+      }
+   },
+   ["norn-demo"] = {
+      ["0.1-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               basexx = "0.4.1-1",
+               date = "2.1.3-1",
+               ["lua-cjson"] = "2.1.0-1",
+               luaossl = "20200709-0",
+               norn = "0.1-1"
+            },
+            modules = {
+               main = "main.lua",
+               networker = "networker.lua",
+               ["norn.demo"] = "norn/demo.lua",
+               ["norn.demo.networker"] = "norn/demo/networker.lua"
             }
          }
       }
