@@ -11,9 +11,9 @@ description = {
 }
 dependencies = {
    "lua ~> 5.2",
-   "date ~> 2.1.3",
-   "lunajson ~> 1.2",
    "basexx ~> 0.4",
+   "date ~> 2.1.3",
+   "dkjson ~> 2.5",
 }
 build = {
    type = "builtin",
