@@ -50,7 +50,7 @@ function Block:verify_signers(keys_orig)
 	for _, signature in pairs(self.signatures) do
 		local matching_idx = nil
 		for i, key in ipairs(keys_copy) do
-			if key:verify(signature, self.hash) then
+			if crypto.verify(key, signature, self.hash) then
 				matching_idx = i
 				break
 			end

@@ -1,15 +1,14 @@
+require("spec/norn/helpers/crypto")
 require("busted.runner")()
 
 local Block = require("norn.block")
 local Blockchain = require("norn.blockchain")
 local date = require("date")
-local hash = require("norn.hash")
-local PrivateKey = require("norn.privatekey")
 
 describe("blockchain", function ()
 	local privkey
 	setup(function ()
-		privkey = PrivateKey()
+		privkey = crypto.generate_private_key()
 	end)
 
 	local function create_block(data, prev_hash)
@@ -47,7 +46,7 @@ describe("blockchain", function ()
 	end)
 
 	it("should fail to initialize with missing history", function ()
-		local second = create_block("fuzzbuzz", hash("foobar"))
+		local second = create_block("fuzzbuzz", crypto.hash("foobar"))
 		assert.has_error(function () Blockchain { second } end)
 	end)
 

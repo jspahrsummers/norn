@@ -1,7 +1,6 @@
+require("spec/norn/helpers/crypto")
 require("busted.runner")()
 
-local PrivateKey = require("norn.privatekey")
-local PublicKey = require("norn.publickey")
 local Wallet = require("norn.wallet")
 
 describe("wallet", function ()
@@ -12,15 +11,15 @@ describe("wallet", function ()
 	end)
 
 	it("should be created with private key", function ()
-		local key = PrivateKey()
+		local key = crypto.generate_private_key()
 		local wallet = Wallet { key = key, balance = 5 }
 		assert.equals(wallet.balance, 5)
 		assert.equals(wallet.key, key)
-		assert.equals(wallet:public_key(), key:public_key())
+		assert.equals(wallet:public_key(), crypto.public_key(key))
 	end)
 
 	it("should be created with public key", function ()
-		local key = PrivateKey():public_key()
+		local key = crypto.public_key(crypto.generate_private_key())
 		local wallet = Wallet { key = key, balance = 5 }
 		assert.equals(wallet.balance, 5)
 		assert.equals(wallet.key, key)
@@ -44,17 +43,17 @@ describe("wallet", function ()
 
 	it("should sort by balance", function ()
 		local a = Wallet {
-			key = PrivateKey(),
+			key = crypto.generate_private_key(),
 			balance = 0,
 		}
 
 		local b = Wallet {
-			key = PrivateKey(),
+			key = crypto.generate_private_key(),
 			balance = 15,
 		}
 
 		local c = Wallet {
-			key = PrivateKey(),
+			key = crypto.generate_private_key(),
 			balance = -1,
 		}
 

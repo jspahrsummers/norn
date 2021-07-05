@@ -1,3 +1,4 @@
+require("spec/norn/helpers/crypto")
 require("busted.runner")()
 
 local Block = require("norn.block")
@@ -9,7 +10,6 @@ local logging = require("norn.logging")
 local message = require("norn.message")
 local Node = require("norn.node")
 local opcode = require("norn.opcode")
-local PrivateKey = require("norn.privatekey")
 local Wallet = require("norn.wallet")
 
 local TestNetworker = {}
@@ -199,7 +199,7 @@ describe("node", function ()
 	describe("blockchain", function ()
 		local privkey
 		setup(function ()
-			privkey = PrivateKey()
+			privkey = crypto.generate_private_key()
 		end)
 
 		local function create_blockchain(...)

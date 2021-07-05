@@ -1,9 +1,8 @@
+require("spec/norn/helpers/crypto")
 require("busted.runner")()
 
 local Block = require("norn.block")
 local date = require("date")
-local hash = require("norn.hash")
-local PrivateKey = require("norn.privatekey")
 local tohex = require("norn.tohex")
 
 describe("block", function ()
@@ -12,7 +11,7 @@ describe("block", function ()
 	setup(function ()
 		keys = {}
 		for i = 1, 10 do
-			keys[i] = PrivateKey()
+			keys[i] = crypto.generate_private_key()
 		end
 	end)
 
@@ -48,7 +47,7 @@ describe("block", function ()
 		local proposed = {
 			timestamp = date(true),
 			data = "foobar",
-			hash = hash("fuzzbuzz"),
+			hash = crypto.hash("fuzzbuzz"),
 		}
 
 		assert.has_error(function () Block(proposed) end)
@@ -71,7 +70,7 @@ describe("block", function ()
 		}
 
 		proposed.hash = Block.compute_hash(proposed)
-		proposed.signatures = { keys[1]:sign(proposed.hash) }
+		proposed.signatures = { crypto.sign(keys[1], proposed.hash) }
 		assert.are.same(Block(proposed), proposed)
 	end)
 
@@ -82,7 +81,7 @@ describe("block", function ()
 		}
 
 		proposed.hash = Block.compute_hash(proposed)
-		proposed.signatures = { keys[1]:sign(proposed.hash) }
+		proposed.signatures = { crypto.sign(keys[1], proposed.hash) }
 
 		local block = Block(proposed)
 		assert.are.equal(block, block)
@@ -95,7 +94,7 @@ describe("block", function ()
 		}
 
 		proposed.hash = Block.compute_hash(proposed)
-		proposed.signatures = { keys[1]:sign(proposed.hash) }
+		proposed.signatures = { crypto.sign(keys[1], proposed.hash) }
 
 		local block = Block(proposed)
 		assert.are.equal(Block.from_network_representation(block:network_representation()), block)
@@ -108,7 +107,7 @@ describe("block", function ()
 		}
 
 		proposed.hash = Block.compute_hash(proposed)
-		proposed.signatures = { keys[1]:sign(proposed.hash) }
+		proposed.signatures = { crypto.sign(keys[1], proposed.hash) }
 		local a = Block(proposed)
 
 		proposed = {
@@ -117,7 +116,7 @@ describe("block", function ()
 		}
 
 		proposed.hash = Block.compute_hash(proposed)
-		proposed.signatures = { keys[1]:sign(proposed.hash) }
+		proposed.signatures = { crypto.sign(keys[1], proposed.hash) }
 		local b = Block(proposed)
 
 		assert.are_not.equal(a, b)
@@ -133,7 +132,7 @@ describe("block", function ()
 
 		local signatures = {}
 		for i, key in ipairs(keys) do
-			signatures[i] = key:sign(proposed.hash)
+			signatures[i] = crypto.sign(key, proposed.hash)
 		end
 
 		proposed.signatures = signatures
@@ -144,11 +143,11 @@ describe("block", function ()
 		local proposed = {
 			timestamp = date(true),
 			data = "foobar",
-			previous_hash = hash("fuzzbuzz")
+			previous_hash = crypto.hash("fuzzbuzz")
 		}
 
 		proposed.hash = Block.compute_hash(proposed)
-		proposed.signatures = { keys[1]:sign(proposed.hash) }
+		proposed.signatures = { crypto.sign(keys[1], proposed.hash) }
 		assert.are.same(Block(proposed), proposed)
 	end)
 
@@ -198,7 +197,7 @@ describe("block", function ()
 		local b = {
 			timestamp = date("2020-01-01"),
 			data = "foobar",
-			previous_hash = hash("fuzzbuzz")
+			previous_hash = crypto.hash("fuzzbuzz")
 		}
 
 		assert.are_not.equal(Block.compute_hash(a), Block.compute_hash(b))
@@ -214,7 +213,7 @@ describe("block", function ()
 
 		local signatures = {}
 		for i, key in ipairs(keys) do
-			signatures[i] = key:sign(proposed.hash)
+			signatures[i] = crypto.sign(key, proposed.hash)
 		end
 
 		proposed.signatures = signatures
@@ -233,7 +232,7 @@ describe("block", function ()
 		local signatures = {}
 		for i, key in ipairs(keys) do
 			if i > 1 then
-				signatures[i] = key:sign(proposed.hash)
+				signatures[i] = crypto.sign(key, proposed.hash)
 			end
 		end
 
@@ -250,8 +249,8 @@ describe("block", function ()
 
 		proposed.hash = Block.compute_hash(proposed)
 
-		local unknown_key = PrivateKey()
-		proposed.signatures = { unknown_key:sign(proposed.hash) }
+		local unknown_key = crypto.generate_private_key()
+		proposed.signatures = { crypto.sign(unknown_key, proposed.hash) }
 
 		local block = Block(proposed)
 		assert.is_false(block:verify_signers(keys))
@@ -265,7 +264,7 @@ describe("block", function ()
 		}
 
 		proposed.hash = Block.compute_hash(proposed)
-		proposed.signatures = { keys[1]:sign(proposed.hash) }
+		proposed.signatures = { crypto.sign(keys[1], proposed.hash) }
 
 		local block = Block(proposed)
 		assert.is_false(block:verify_signers(keys))
