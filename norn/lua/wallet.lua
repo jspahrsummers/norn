@@ -34,7 +34,7 @@ end
 
 function Wallet:network_representation()
 	return {
-		key = crypto.serialize(self:public_key()),
+		key = crypto.serialize_public_key(self:public_key()),
 		balance = self.balance,
 	}
 end
