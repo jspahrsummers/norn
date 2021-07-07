@@ -1,11 +1,4 @@
-commands = {
-   json2lua = {
-      "lua-cjson/2.1.0-1"
-   },
-   lua2json = {
-      "lua-cjson/2.1.0-1"
-   }
-}
+commands = {}
 dependencies = {
    basexx = {
       ["0.4.1-1"] = {
@@ -43,8 +36,8 @@ dependencies = {
          }
       }
    },
-   ["lua-cjson"] = {
-      ["2.1.0-1"] = {
+   dkjson = {
+      ["2.5-2"] = {
          {
             constraints = {
                {
@@ -52,16 +45,14 @@ dependencies = {
                   version = {
                      5, 1, string = "5.1"
                   }
+               },
+               {
+                  op = "<",
+                  version = {
+                     5, 4, string = "5.4"
+                  }
                }
             },
-            name = "lua"
-         }
-      }
-   },
-   luaossl = {
-      ["20200709-0"] = {
-         {
-            constraints = {},
             name = "lua"
          }
       }
@@ -84,6 +75,17 @@ dependencies = {
                {
                   op = "~>",
                   version = {
+                     0, 4, string = "0.4"
+                  }
+               }
+            },
+            name = "basexx"
+         },
+         {
+            constraints = {
+               {
+                  op = "~>",
+                  version = {
                      2, 1, 3, string = "2.1.3"
                   }
                }
@@ -93,74 +95,26 @@ dependencies = {
          {
             constraints = {
                {
-                  op = "==",
-                  version = {
-                     2, 1, 0, string = "2.1.0"
-                  }
-               }
-            },
-            name = "lua-cjson"
-         },
-         {
-            constraints = {
-               {
-                  op = ">=",
-                  version = {
-                     20200709, string = "20200709"
-                  }
-               }
-            },
-            name = "luaossl"
-         },
-         {
-            constraints = {
-               {
                   op = "~>",
                   version = {
-                     0, 4, string = "0.4"
+                     2, 5, string = "2.5"
                   }
                }
             },
-            name = "basexx"
-         }
-      }
-   },
-   ["norn-demo"] = {
-      ["0.1-1"] = {
-         {
-            constraints = {},
-            name = "norn"
+            name = "dkjson"
          }
       }
    }
 }
 modules = {
-   _openssl = {
-      "luaossl/20200709-0"
-   },
    basexx = {
       "basexx/0.4.1-1"
-   },
-   cjson = {
-      "lua-cjson/2.1.0-1"
-   },
-   ["cjson.util"] = {
-      "lua-cjson/2.1.0-1"
    },
    date = {
       "date/2.1.3-1"
    },
-   json2lua = {
-      "lua-cjson/2.1.0-1"
-   },
-   lua2json = {
-      "lua-cjson/2.1.0-1"
-   },
-   main = {
-      "norn-demo/0.1-1"
-   },
-   networker = {
-      "norn-demo/0.1-1"
+   dkjson = {
+      "dkjson/2.5-2"
    },
    ["norn.block"] = {
       "norn/0.1-1"
@@ -174,16 +128,7 @@ modules = {
    ["norn.consensus"] = {
       "norn/0.1-1"
    },
-   ["norn.demo"] = {
-      "norn-demo/0.1-1"
-   },
-   ["norn.demo.networker"] = {
-      "norn-demo/0.1-1"
-   },
    ["norn.functional"] = {
-      "norn/0.1-1"
-   },
-   ["norn.hash"] = {
       "norn/0.1-1"
    },
    ["norn.logging"] = {
@@ -192,19 +137,10 @@ modules = {
    ["norn.message"] = {
       "norn/0.1-1"
    },
-   ["norn.networker"] = {
-      "norn/0.1-1"
-   },
    ["norn.node"] = {
       "norn/0.1-1"
    },
    ["norn.opcode"] = {
-      "norn/0.1-1"
-   },
-   ["norn.privatekey"] = {
-      "norn/0.1-1"
-   },
-   ["norn.publickey"] = {
       "norn/0.1-1"
    },
    ["norn.timer"] = {
@@ -215,81 +151,6 @@ modules = {
    },
    ["norn.wallet"] = {
       "norn/0.1-1"
-   },
-   openssl = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.auxlib"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.bignum"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.cipher"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.des"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.digest"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.hmac"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.kdf"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.ocsp.basic"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.ocsp.response"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.pkcs12"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.pkey"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.pubkey"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.rand"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.ssl"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.ssl.context"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.x509"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.x509.altname"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.x509.chain"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.x509.crl"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.x509.csr"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.x509.extension"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.x509.name"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.x509.store"] = {
-      "luaossl/20200709-0"
-   },
-   ["openssl.x509.verify_param"] = {
-      "luaossl/20200709-0"
    }
 }
 repository = {
@@ -317,57 +178,14 @@ repository = {
          }
       }
    },
-   ["lua-cjson"] = {
-      ["2.1.0-1"] = {
-         {
-            arch = "installed",
-            commands = {
-               json2lua = "json2lua",
-               lua2json = "lua2json"
-            },
-            dependencies = {},
-            modules = {
-               cjson = "cjson.so",
-               ["cjson.util"] = "cjson/util.lua",
-               json2lua = "json2lua.lua",
-               lua2json = "lua2json.lua"
-            }
-         }
-      }
-   },
-   luaossl = {
-      ["20200709-0"] = {
+   dkjson = {
+      ["2.5-2"] = {
          {
             arch = "installed",
             commands = {},
             dependencies = {},
             modules = {
-               _openssl = "_openssl.so",
-               openssl = "openssl.lua",
-               ["openssl.auxlib"] = "openssl/auxlib.lua",
-               ["openssl.bignum"] = "openssl/bignum.lua",
-               ["openssl.cipher"] = "openssl/cipher.lua",
-               ["openssl.des"] = "openssl/des.lua",
-               ["openssl.digest"] = "openssl/digest.lua",
-               ["openssl.hmac"] = "openssl/hmac.lua",
-               ["openssl.kdf"] = "openssl/kdf.lua",
-               ["openssl.ocsp.basic"] = "openssl/ocsp/basic.lua",
-               ["openssl.ocsp.response"] = "openssl/ocsp/response.lua",
-               ["openssl.pkcs12"] = "openssl/pkcs12.lua",
-               ["openssl.pkey"] = "openssl/pkey.lua",
-               ["openssl.pubkey"] = "openssl/pubkey.lua",
-               ["openssl.rand"] = "openssl/rand.lua",
-               ["openssl.ssl"] = "openssl/ssl.lua",
-               ["openssl.ssl.context"] = "openssl/ssl/context.lua",
-               ["openssl.x509"] = "openssl/x509.lua",
-               ["openssl.x509.altname"] = "openssl/x509/altname.lua",
-               ["openssl.x509.chain"] = "openssl/x509/chain.lua",
-               ["openssl.x509.crl"] = "openssl/x509/crl.lua",
-               ["openssl.x509.csr"] = "openssl/x509/csr.lua",
-               ["openssl.x509.extension"] = "openssl/x509/extension.lua",
-               ["openssl.x509.name"] = "openssl/x509/name.lua",
-               ["openssl.x509.store"] = "openssl/x509/store.lua",
-               ["openssl.x509.verify_param"] = "openssl/x509/verify_param.lua"
+               dkjson = "dkjson.lua"
             }
          }
       }
@@ -380,8 +198,7 @@ repository = {
             dependencies = {
                basexx = "0.4.1-1",
                date = "2.1.3-1",
-               ["lua-cjson"] = "2.1.0-1",
-               luaossl = "20200709-0"
+               dkjson = "2.5-2"
             },
             modules = {
                ["norn.block"] = "norn/block.lua",
@@ -389,38 +206,13 @@ repository = {
                ["norn.clock"] = "norn/clock.lua",
                ["norn.consensus"] = "norn/consensus.lua",
                ["norn.functional"] = "norn/functional.lua",
-               ["norn.hash"] = "norn/hash.lua",
                ["norn.logging"] = "norn/logging.lua",
                ["norn.message"] = "norn/message.lua",
-               ["norn.networker"] = "norn/networker.lua",
                ["norn.node"] = "norn/node.lua",
                ["norn.opcode"] = "norn/opcode.lua",
-               ["norn.privatekey"] = "norn/privatekey.lua",
-               ["norn.publickey"] = "norn/publickey.lua",
                ["norn.timer"] = "norn/timer.lua",
                ["norn.tohex"] = "norn/tohex.lua",
                ["norn.wallet"] = "norn/wallet.lua"
-            }
-         }
-      }
-   },
-   ["norn-demo"] = {
-      ["0.1-1"] = {
-         {
-            arch = "installed",
-            commands = {},
-            dependencies = {
-               basexx = "0.4.1-1",
-               date = "2.1.3-1",
-               ["lua-cjson"] = "2.1.0-1",
-               luaossl = "20200709-0",
-               norn = "0.1-1"
-            },
-            modules = {
-               main = "main.lua",
-               networker = "networker.lua",
-               ["norn.demo"] = "norn/demo.lua",
-               ["norn.demo.networker"] = "norn/demo/networker.lua"
             }
          }
       }

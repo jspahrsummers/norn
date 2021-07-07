@@ -4,7 +4,6 @@ Block.__index = Block
 local basexx = require("basexx")
 local consensus = require("norn.consensus")
 local date = require("date")
-local hash = require("norn.hash")
 local tohex = require("norn.tohex")
 
 setmetatable(Block, {
@@ -38,7 +37,7 @@ function Block.forge(proposed)
 
 	proposed.signatures = {}
 	for _, key in pairs(proposed.keys) do
-		table.insert(proposed.signatures, key:sign(proposed.hash))
+		table.insert(proposed.signatures, crypto.sign(key, proposed.hash))
 	end
 
 	proposed.keys = nil
@@ -51,7 +50,7 @@ function Block:verify_signers(keys_orig)
 	for _, signature in pairs(self.signatures) do
 		local matching_idx = nil
 		for i, key in ipairs(keys_copy) do
-			if key:verify(signature, self.hash) then
+			if crypto.verify(key, signature, self.hash) then
 				matching_idx = i
 				break
 			end
@@ -70,7 +69,7 @@ end
 function Block.compute_hash(obj)
 	assert(obj.timestamp, "Block is missing a timestamp")
 	assert(obj.data, "Block must have data")
-	return hash(obj.timestamp:fmt("${iso}"), obj.previous_hash or "", obj.data)
+	return crypto.hash(obj.timestamp:fmt("${iso}"), obj.previous_hash or "", obj.data)
 end
 
 function Block.from_network_representation(tbl)

@@ -5,7 +5,6 @@ local functional = require("norn.functional")
 local logging = require("norn.logging")
 local message = require("norn.message")
 local opcode = require("norn.opcode")
-local PublicKey = require("norn.publickey")
 local tohex = require("norn.tohex")
 local timer = require("norn.timer")
 local Wallet = require("norn.wallet")
@@ -118,7 +117,11 @@ function Node:_recv_loop()
 			self.peer_set[sender] = self.clock:now()
 
 			local msg = message.decode(bytes)
-			self:handle_message(sender, msg)
+			if not msg then
+				logging.error("%s unable to parse message:\n%s", self.address, bytes)
+			else
+				self:handle_message(sender, msg)
+			end
 
 			coroutine.yield()
 		end

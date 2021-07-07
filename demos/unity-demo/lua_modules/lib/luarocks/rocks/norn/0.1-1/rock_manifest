@@ -5,23 +5,19 @@ rock_manifest = {
    },
    lua = {
       norn = {
-         ["block.lua"] = "f2d4a8d1af7daec6a2669707919371ab",
+         ["block.lua"] = "bb48e9b3f888e8850f48930db2194556",
          ["blockchain.lua"] = "c23beb6eb8d1044f47001c297cbcee50",
          ["clock.lua"] = "9b8626d034099f8347b284b04c1ae0cf",
          ["consensus.lua"] = "c1926377fd69d0b10ebf58f7b484d44d",
          ["functional.lua"] = "9e50f4f84b9f233f6b6b00a6591ff856",
-         ["hash.lua"] = "0cc802c50b9a23e475a7b1e2c32cbda7",
          ["logging.lua"] = "631855ace94ee9486982e6341812771f",
-         ["message.lua"] = "ce9592dec5c923c66828ca2e4d5daf31",
-         ["networker.lua"] = "4e90e84236bb5b6141eb28a3e8e1cfe4",
-         ["node.lua"] = "828fcab05ee0d5b2e72afb48a781f7a1",
-         ["opcode.lua"] = "3310b4b69c97e9fc9626e2475529af61",
-         ["privatekey.lua"] = "7ab216387b33c30290be7cc34ca35eb9",
-         ["publickey.lua"] = "dc2311ff023eaabc59bc4620025c875b",
+         ["message.lua"] = "a1a39d7804abde0937ed5cd654c9f418",
+         ["node.lua"] = "5eb6c0c827b7b2fc187c5b0d696ee8c0",
+         ["opcode.lua"] = "0b2cc1e19603bc740049d4b0bed041be",
          ["timer.lua"] = "64bc2e9e3b0572d7e349573b3be4ada0",
          ["tohex.lua"] = "6c99dec42844b9429ab92297d8e4ae27",
-         ["wallet.lua"] = "bd1d8aaaa248ee3fbb02aefcf25db9ad"
+         ["wallet.lua"] = "2e9b9e7586de6cd471862d4d978ccb11"
       }
    },
-   ["norn-0.1-1.rockspec"] = "5c4c49d9f5c41322835e9abb90818674"
+   ["norn-0.1-1.rockspec"] = "fdc637473e45e6ba27da4ab6c86dd90f"
 }

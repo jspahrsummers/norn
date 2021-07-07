@@ -11,10 +11,9 @@ description = {
 }
 dependencies = {
    "lua ~> 5.2",
-   "date ~> 2.1.3",
-   "lua-cjson == 2.1.0",
-   "luaossl >= 20200709",
    "basexx ~> 0.4",
+   "date ~> 2.1.3",
+   "dkjson ~> 2.5",
 }
 build = {
    type = "builtin",
@@ -24,14 +23,10 @@ build = {
       ["norn.clock"] = "norn/lua/clock.lua",
       ["norn.consensus"] = "norn/lua/consensus.lua",
       ["norn.functional"] = "norn/lua/functional.lua",
-      ["norn.hash"] = "norn/lua/hash.lua",
       ["norn.logging"] = "norn/lua/logging.lua",
       ["norn.message"] = "norn/lua/message.lua",
-      ["norn.networker"] = "norn/lua/networker.lua",
       ["norn.node"] = "norn/lua/node.lua",
       ["norn.opcode"] = "norn/lua/opcode.lua",
-      ["norn.privatekey"] = "norn/lua/privatekey.lua",
-      ["norn.publickey"] = "norn/lua/publickey.lua",
       ["norn.timer"] = "norn/lua/timer.lua",
       ["norn.tohex"] = "norn/lua/tohex.lua",
       ["norn.wallet"] = "norn/lua/wallet.lua",
