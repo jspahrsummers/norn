@@ -9,6 +9,7 @@ public sealed class NornController : MonoBehaviour
 	void Start()
 	{
 		UserData.RegisterAssembly();
+		Script.GlobalOptions.RethrowExceptionNested = true;
 
 		var scriptLoader = new FileSystemScriptLoader();
 		scriptLoader.ModulePaths = new string[] { "lua_modules/share/lua/5.2/?.lua" };
@@ -19,7 +20,7 @@ public sealed class NornController : MonoBehaviour
 		script.Globals["create_networker"] = (Func<string, object>)(address => new NornNetworker(address));
 
 		var mainText = Resources.Load<TextAsset>("main.lua");
-		var result = script.DoString(mainText.text);
+		var result = script.DoString(mainText.text, null, "main.lua");
 		Debug.Log(result);
 	}
 }
