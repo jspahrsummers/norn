@@ -2,6 +2,7 @@ using MoonSharp.Interpreter;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
+[MoonSharpUserData]
 public sealed class NornNetworker
 {
 	private string _address;
@@ -15,6 +16,7 @@ public sealed class NornNetworker
 
 	private ConcurrentQueue<Message> _messageQueue = new ConcurrentQueue<Message>();
 
+	[MoonSharpHidden]
 	public NornNetworker(string address)
 	{
 		_address = address;

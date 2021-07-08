@@ -9,6 +9,19 @@ public static class NornCrypto
 {
 	private static Int32 _privateKeyNum = -1;
 
+	public static Table ModuleTable(Script script)
+	{
+		var crypto = new Table(script);
+		crypto["hash"] = new CallbackFunction(HashCallback);
+		crypto["generate_private_key"] = (Func<DynValue>)(GeneratePrivateKey);
+		crypto["public_key"] = (Func<DynValue, DynValue>)(PublicKey);
+		crypto["sign"] = new CallbackFunction(SignCallback);
+		crypto["verify"] = new CallbackFunction(VerifyCallback);
+		crypto["serialize_public_key"] = (Func<DynValue, string>)(SerializePublicKey);
+		crypto["deserialize_public_key"] = (Func<string, DynValue>)(DeserializePublicKey);
+		return crypto;
+	}
+
 	public static DynValue HashCallback(ScriptExecutionContext ctx, CallbackArguments cbArgs)
 	{
 		var args = cbArgs.GetArray();
