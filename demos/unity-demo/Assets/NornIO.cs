@@ -20,7 +20,7 @@ public static class NornIO
 	public static DynValue Write(ScriptExecutionContext ctx, CallbackArguments cbArgs)
 	{
 		var args = cbArgs.GetArray();
-		var message = String.Join("\t", from a in args.Skip(1) select a.CastToString());
+		var message = String.Join("", from a in args.Skip(1) select a.CastToString());
 		Debug.Log(message);
 		return DynValue.Void;
 	}
