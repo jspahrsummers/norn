@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
@@ -17,8 +16,10 @@ public sealed class NornController : MonoBehaviour
 		var script = new Script();
 		script.Options.ScriptLoader = scriptLoader;
 		script.Globals["crypto"] = NornCrypto.ModuleTable(script);
+		script.Globals["create_networker"] = (Func<string, object>)(address => new NornNetworker(address));
 
-		var result = script.DoString("require('norn.demo')");
+		var mainText = Resources.Load<TextAsset>("main.lua");
+		var result = script.DoString(mainText.text);
 		Debug.Log(result);
 	}
 }
