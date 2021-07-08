@@ -14,7 +14,7 @@ public sealed class NornController : MonoBehaviour
 		var scriptLoader = new FileSystemScriptLoader();
 		scriptLoader.ModulePaths = new string[] { "lua_modules/share/lua/5.2/?.lua" };
 
-		var script = new Script();
+		var script = new Script(CoreModules.Preset_Complete);
 		script.Options.ScriptLoader = scriptLoader;
 		script.Globals["crypto"] = NornCrypto.ModuleTable(script);
 		script.Globals["create_networker"] = (Func<string, object>)(address => new NornNetworker(address));
