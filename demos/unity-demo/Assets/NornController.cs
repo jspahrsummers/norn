@@ -17,6 +17,7 @@ public sealed class NornController : MonoBehaviour
 		var script = new Script(CoreModules.Preset_Complete);
 		script.Options.ScriptLoader = scriptLoader;
 		script.Globals["crypto"] = NornCrypto.ModuleTable(script);
+		script.Globals["io"] = NornIO.ModuleTable(script);
 		script.Globals["create_networker"] = (Func<string, object>)(address => new NornNetworker(address));
 
 		var mainText = Resources.Load<TextAsset>("main.lua");

@@ -47,7 +47,7 @@ public static class NornCrypto
 		}
 	}
 
-	private static string sign(DynValue privateKey, IEnumerable<DynValue> data)
+	private static string Sign(DynValue privateKey, IEnumerable<DynValue> data)
 	{
 		Debug.Assert(privateKey.Number < 0);
 		return String.Join<string>("*", from d in data.Prepend(privateKey) select d.CastToString());
@@ -57,7 +57,7 @@ public static class NornCrypto
 	{
 		var args = cbArgs.GetArray();
 		var privateKey = args[0];
-		return DynValue.NewString(sign(privateKey, args.Skip(1)));
+		return DynValue.NewString(Sign(privateKey, args.Skip(1)));
 	}
 
 	public static DynValue VerifyCallback(ScriptExecutionContext ctx, CallbackArguments cbArgs)
@@ -65,7 +65,7 @@ public static class NornCrypto
 		var args = cbArgs.GetArray();
 
 		var privateKey = args[0].Number < 0 ? args[0] : DynValue.NewNumber(-args[0].Number);
-		var expected = sign(privateKey, args.Skip(2));
+		var expected = Sign(privateKey, args.Skip(2));
 
 		return DynValue.NewBoolean(args[1].String == expected);
 	}
